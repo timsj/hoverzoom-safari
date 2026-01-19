@@ -40,5 +40,17 @@
     "permissions": [
         "storage",
         "activeTab"
-    ]
+    ],
+
+    "host_permissions": [
+        "<all_urls>"
+    ],
+
+    "web_accessible_resources": [{
+        "resources": [
+            "images/loading.gif",
+            "images/spectrogram.png"
+        ],
+        "matches": [ "<all_urls>" ]
+    }]
 }
