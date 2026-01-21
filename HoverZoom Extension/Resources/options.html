@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>HoverZoom+ Options</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="images/icon-48.png" alt="HoverZoom+" class="logo">
+            <h1>HoverZoom+ Options</h1>
+        </header>
+
+        <main>
+            <!-- General Settings -->
+            <section class="settings-section">
+                <h2>General</h2>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="extensionEnabled" checked>
+                        <span>Enable HoverZoom+</span>
+                    </label>
+                </div>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="showHighRes">
+                        <span>Show high resolution images when available</span>
+                    </label>
+                </div>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="zoomVideos">
+                        <span>Enable video zoom</span>
+                    </label>
+                </div>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="muteVideos">
+                        <span>Mute videos by default</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Display Settings -->
+            <section class="settings-section">
+                <h2>Display</h2>
+
+                <div class="setting-row">
+                    <label for="displayDelay">Hover delay (ms):</label>
+                    <input type="number" id="displayDelay" min="0" max="2000" step="50">
+                </div>
+
+                <div class="setting-row">
+                    <label for="fadeDuration">Fade duration (ms):</label>
+                    <input type="number" id="fadeDuration" min="0" max="1000" step="50">
+                </div>
+
+                <div class="setting-row">
+                    <label for="zoomFactor">Zoom factor:</label>
+                    <input type="number" id="zoomFactor" min="0.5" max="3" step="0.1">
+                </div>
+
+                <div class="setting-row">
+                    <label for="picturesOpacity">Image opacity:</label>
+                    <input type="range" id="picturesOpacity" min="0.1" max="1" step="0.1">
+                    <span id="opacityValue">1</span>
+                </div>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="centerImages">
+                        <span>Center images on screen</span>
+                    </label>
+                </div>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="viewerShadowEnabled">
+                        <span>Show shadow around zoomed images</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Behavior Settings -->
+            <section class="settings-section">
+                <h2>Behavior</h2>
+
+                <div class="setting-row">
+                    <label for="actionKey">Activation key:</label>
+                    <select id="actionKey">
+                        <option value="0">None (always active)</option>
+                        <option value="16">Shift</option>
+                        <option value="17">Ctrl</option>
+                        <option value="18">Alt</option>
+                        <option value="91">Command</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="enableGalleries">
+                        <span>Enable gallery navigation</span>
+                    </label>
+                </div>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="galleriesMouseWheel">
+                        <span>Use mouse wheel for gallery navigation</span>
+                    </label>
+                </div>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="mouseUnderlap">
+                        <span>Allow mouse under zoomed image</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Excluded Sites -->
+            <section class="settings-section">
+                <h2>Excluded Sites</h2>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="whiteListMode">
+                        <span>White list mode (only enable on listed sites)</span>
+                    </label>
+                </div>
+
+                <div class="setting-row full-width">
+                    <label for="excludedSites">Sites (one per line):</label>
+                    <textarea id="excludedSites" rows="5" placeholder="example.com&#10;another-site.com"></textarea>
+                </div>
+            </section>
+
+            <!-- Advanced Settings -->
+            <section class="settings-section">
+                <h2>Advanced</h2>
+
+                <div class="setting-row">
+                    <label for="maxWidth">Max width (0 = unlimited):</label>
+                    <input type="number" id="maxWidth" min="0" max="4000" step="100">
+                </div>
+
+                <div class="setting-row">
+                    <label for="maxHeight">Max height (0 = unlimited):</label>
+                    <input type="number" id="maxHeight" min="0" max="4000" step="100">
+                </div>
+
+                <div class="setting-row">
+                    <label>
+                        <input type="checkbox" id="debug">
+                        <span>Enable debug logging</span>
+                    </label>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <button id="saveBtn" class="primary">Save Options</button>
+            <button id="resetBtn">Reset to Defaults</button>
+            <span id="statusMsg"></span>
+        </footer>
+    </div>
+
+    <script src="jquery.js"></script>
+    <script src="tools.js"></script>
+    <script src="common.js"></script>
+    <script src="options.js"></script>
+</body>
+</html>

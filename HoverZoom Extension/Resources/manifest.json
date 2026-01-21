@@ -26,6 +26,16 @@
             "common.js",
             "hoverzoom.js",
             "default.js",
+            "reddit.js",
+            "twitter.js",
+            "imgur.js",
+            "youtube.js",
+            "amazon.js",
+            "google.js",
+            "instagram.js",
+            "facebook.js",
+            "pinterest.js",
+            "flickr.js",
             "content.js"
         ],
         "matches": [ "<all_urls>" ],
@@ -35,6 +45,11 @@
     "action": {
         "default_popup": "popup.html",
         "default_icon": "images/toolbar-icon.svg"
+    },
+
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true
     },
 
     "permissions": [

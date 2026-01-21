@@ -4,6 +4,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     const toggle = document.getElementById('enableToggle');
     const statusText = document.getElementById('statusText');
+    const optionsBtn = document.getElementById('optionsBtn');
+
+    // Open options page
+    optionsBtn.addEventListener('click', function() {
+        browser.runtime.openOptionsPage();
+    });
 
     // Load current state
     browser.storage.sync.get({ extensionEnabled: true }, function(result) {

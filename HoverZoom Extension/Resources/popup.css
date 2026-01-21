@@ -107,6 +107,23 @@ input:checked + .slider:before {
     margin: 4px 0;
 }
 
+#optionsBtn {
+    margin: 8px 0;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #007aff;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#optionsBtn:hover {
+    background: #0056b3;
+}
+
 .version {
     color: #999;
     font-size: 11px !important;
