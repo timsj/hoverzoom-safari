@@ -142,6 +142,16 @@ main {
     accent-color: var(--accent-color);
 }
 
+.setting-row input[type="color"] {
+    width: 60px;
+    height: 36px;
+    padding: 2px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    cursor: pointer;
+}
+
 .setting-row textarea {
     width: 100%;
     padding: 12px;
