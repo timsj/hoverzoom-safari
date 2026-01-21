@@ -4236,7 +4236,14 @@ var hoverZoom = {
 
         // check that loader exists
         if (hoverZoom.hzLoader == null) {
-            hoverZoom.hzLoader = $('<div id="hzLoader"><img src="' + browser.runtime.getURL('images/loading.gif') + '" style="opacity: 0.8; padding: 0; margin: 0" /></div>');
+            // Inject CSS animation keyframes if not already present
+            if (!document.getElementById('hzLoaderStyle')) {
+                var style = document.createElement('style');
+                style.id = 'hzLoaderStyle';
+                style.textContent = '@keyframes hzSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+                document.head.appendChild(style);
+            }
+            hoverZoom.hzLoader = $('<div id="hzLoader"><img src="' + browser.runtime.getURL('images/loading.svg') + '" style="opacity: 0.8; padding: 0; margin: 0; width: 32px; height: 32px; animation: hzSpin 1s linear infinite;" /></div>');
             hoverZoom.hzLoader.width('auto').height('auto');
             hoverZoom.hzLoader.css(hoverZoom.hzLoaderCss);
             if (position) hoverZoom.hzLoader.css({top:position.top, left:position.left});

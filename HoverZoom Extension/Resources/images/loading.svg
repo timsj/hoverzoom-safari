@@ -1,0 +1,16 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(16, 16)">
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="0" y1="-6" x2="0" y2="-11" opacity="1"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="3" y1="-5.2" x2="5.5" y2="-9.5" transform="rotate(30)" opacity="0.92"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="5.2" y1="-3" x2="9.5" y2="-5.5" transform="rotate(60)" opacity="0.83"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="6" y1="0" x2="11" y2="0" transform="rotate(90)" opacity="0.75"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="5.2" y1="3" x2="9.5" y2="5.5" transform="rotate(120)" opacity="0.67"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="3" y1="5.2" x2="5.5" y2="9.5" transform="rotate(150)" opacity="0.58"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="0" y1="6" x2="0" y2="11" transform="rotate(180)" opacity="0.5"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="-3" y1="5.2" x2="-5.5" y2="9.5" transform="rotate(210)" opacity="0.42"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="-5.2" y1="3" x2="-9.5" y2="5.5" transform="rotate(240)" opacity="0.33"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="-6" y1="0" x2="-11" y2="0" transform="rotate(270)" opacity="0.25"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="-5.2" y1="-3" x2="-9.5" y2="-5.5" transform="rotate(300)" opacity="0.17"/>
+    <line stroke="#666666" stroke-width="2" stroke-linecap="round" x1="-3" y1="-5.2" x2="-5.5" y2="-9.5" transform="rotate(330)" opacity="0.08"/>
+  </g>
+</svg>

@@ -74,7 +74,7 @@ const factorySettings = {
     downloadFilename: '',
     useSeparateTabOrWindowForUnloadableUrlsEnabled: false,
     useSeparateTabOrWindowForUnloadableUrls: 'window',
-    captionLocation: 'below',
+    captionLocation: 'none',
     detailsLocation: 'none',
     showDetailFilename: true,
     showDetailHost: true,

@@ -13,9 +13,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('picturesOpacity').addEventListener('input', function() {
         document.getElementById('opacityValue').textContent = this.value;
     });
-    document.getElementById('captionOpacity').addEventListener('input', function() {
-        document.getElementById('captionOpacityValue').textContent = this.value;
-    });
     document.getElementById('detailsOpacity').addEventListener('input', function() {
         document.getElementById('detailsOpacityValue').textContent = this.value;
     });
@@ -40,12 +37,9 @@ async function loadOptionsUI() {
         document.getElementById('centerImages').checked = options.centerImages === true;
         document.getElementById('viewerShadowEnabled').checked = options.viewerShadowEnabled !== false;
 
-        // Frame & Captions
+        // Frame & Details
         document.getElementById('frameBackgroundColor').value = options.frameBackgroundColor || '#ffffff';
         document.getElementById('frameThickness').value = options.frameThickness ?? 4;
-        document.getElementById('captionLocation').value = options.captionLocation || 'below';
-        document.getElementById('captionOpacity').value = options.captionOpacity || 1;
-        document.getElementById('captionOpacityValue').textContent = options.captionOpacity || 1;
         document.getElementById('detailsLocation').value = options.detailsLocation || 'none';
         document.getElementById('detailsOpacity').value = options.detailsOpacity || 1;
         document.getElementById('detailsOpacityValue').textContent = options.detailsOpacity || 1;
@@ -96,11 +90,9 @@ async function saveOptions() {
             centerImages: document.getElementById('centerImages').checked,
             viewerShadowEnabled: document.getElementById('viewerShadowEnabled').checked,
 
-            // Frame & Captions
+            // Frame & Details
             frameBackgroundColor: document.getElementById('frameBackgroundColor').value,
             frameThickness: parseInt(document.getElementById('frameThickness').value) ?? 4,
-            captionLocation: document.getElementById('captionLocation').value,
-            captionOpacity: parseFloat(document.getElementById('captionOpacity').value) || 1,
             detailsLocation: document.getElementById('detailsLocation').value,
             detailsOpacity: parseFloat(document.getElementById('detailsOpacity').value) || 1,
             fontSize: parseInt(document.getElementById('fontSize').value) || 11,

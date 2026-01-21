@@ -63,7 +63,7 @@
 
     "web_accessible_resources": [{
         "resources": [
-            "images/loading.gif",
+            "images/loading.svg",
             "images/spectrogram.png"
         ],
         "matches": [ "<all_urls>" ]
