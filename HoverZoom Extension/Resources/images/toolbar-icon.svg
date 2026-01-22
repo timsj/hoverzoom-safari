@@ -1,5 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.9375 15.9453">
-  <path d="M7.96875 15.9375C12.3281 15.9375 15.9375 12.3203 15.9375 7.96875C15.9375 3.60938 12.3203 0 7.96094 0C3.60938 0 0 3.60938 0 7.96875C0 12.3203 3.61719 15.9375 7.96875 15.9375ZM7.96875 14.6094C4.28125 14.6094 1.33594 11.6562 1.33594 7.96875C1.33594 4.28125 4.27344 1.32812 7.96094 1.32812C11.6484 1.32812 14.6094 4.28125 14.6094 7.96875C14.6094 11.6562 11.6562 14.6094 7.96875 14.6094Z" />
-  <path d="M4.53906 8.50781C4.53906 8.70312 4.69531 8.84375 4.89844 8.84375L7.54688 8.84375L6.13281 12.6406C5.94531 13.1406 6.47656 13.4141 6.80469 13.0078L11.0859 7.63281C11.1719 7.53906 11.2188 7.42969 11.2188 7.32812C11.2188 7.13281 11.0625 6.99219 10.8594 6.99219L8.21094 6.99219L9.625 3.19531C9.8125 2.69531 9.28125 2.42188 8.95312 2.82031L4.67188 8.19531C4.58594 8.29688 4.53906 8.40625 4.53906 8.50781Z" />
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="toolbarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B7CF6"/>
+      <stop offset="100%" style="stop-color:#5856D6"/>
+    </linearGradient>
+    <clipPath id="lensClipSmall">
+      <circle cx="6.5" cy="6.5" r="4"/>
+    </clipPath>
+  </defs>
+  <!-- Shadow layer for depth -->
+  <circle cx="6.5" cy="7" r="5" fill="none" stroke="#3D2E8C" stroke-width="1.5" stroke-opacity="0.2"/>
+  <line x1="10.5" y1="11" x2="14.5" y2="15" stroke="#3D2E8C" stroke-width="2" stroke-linecap="round" stroke-opacity="0.2"/>
+  <!-- Image inside lens -->
+  <g clip-path="url(#lensClipSmall)">
+    <rect x="2" y="2" width="9" height="9" fill="#87CEEB"/>
+    <circle cx="8.5" cy="4" r="1.2" fill="#FFD93D"/>
+    <polygon points="2,9.5 5,6 7,8 9,5.5 11,8 11,11 2,11" fill="#5A8A5A"/>
+  </g>
+  <!-- Magnifying glass lens -->
+  <circle cx="6.5" cy="6.5" r="5" fill="none" stroke="url(#toolbarGradient)" stroke-width="2"/>
+  <!-- Handle -->
+  <line x1="10.5" y1="10.5" x2="14.5" y2="14.5" stroke="url(#toolbarGradient)" stroke-width="2.5" stroke-linecap="round"/>
 </svg>
