@@ -4251,7 +4251,8 @@ var hoverZoom = {
 
     // Simulates a mousemove event to force a zoom call
     displayPicFromElement:function (el, force) {
-        if (el.filter(':hover').length > 0 || force) {
+        // Use native matches(':hover') since jQuery doesn't support :hover pseudo-selector
+        if ((el.length > 0 && el[0].matches(':hover')) || force) {
             hoverZoom.currentLink = el;
             $(document).mousemove();
         }
@@ -4386,6 +4387,10 @@ var hoverZoom = {
     },
 
     prepareLink:function (link, src) {
+        // Guard against empty jQuery objects or undefined links
+        if (!link || link.length === 0) {
+            return;
+        }
         if (Array.isArray(src)) {
             link.data().hoverZoomGallerySrc = src;
             link.data().hoverZoomGalleryIndex = 0;

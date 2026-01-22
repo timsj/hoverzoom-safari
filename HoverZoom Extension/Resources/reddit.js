@@ -170,6 +170,7 @@ hoverZoomPlugins.push({
     });
 
     function processGalleryResponse(post, data) {
+      if (!post || post.length === 0) return;
       if (data && data.data) {
         var gallery_data = data.data.children[0].data.gallery_data;
         var media_metadata = data.data.children[0].data.media_metadata;
