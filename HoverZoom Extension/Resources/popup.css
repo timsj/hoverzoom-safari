@@ -18,7 +18,7 @@ body {
 .popup-container {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .header {
@@ -36,6 +36,12 @@ h1 {
     font-size: 18px;
     font-weight: 600;
     color: #333;
+}
+
+.tagline {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
 }
 
 .toggle-container {
@@ -98,17 +104,20 @@ input:checked + .slider:before {
 }
 
 .info {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     color: #666;
 }
 
 .info p {
     font-size: 12px;
-    margin: 4px 0;
+    margin: 0;
 }
 
 #optionsBtn {
-    margin: 8px 0;
+    margin: 0;
     padding: 8px 16px;
     border: none;
     border-radius: 6px;
@@ -145,6 +154,10 @@ input:checked + .slider:before {
 
     #statusText {
         color: #fff;
+    }
+
+    .tagline {
+        color: #aaa;
     }
 
     .info {

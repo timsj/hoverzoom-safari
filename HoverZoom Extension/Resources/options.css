@@ -218,6 +218,12 @@ button:not(.primary):hover {
     opacity: 1;
 }
 
+.version {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
 /* Responsive */
 @media (max-width: 500px) {
     .container {

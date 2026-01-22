@@ -136,9 +136,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 22EEE5F02F1DCED5004C495B /* Build configuration list for PBXNativeTarget "HoverZoom Extension" */;
 			buildPhases = (
+				22EEE6002F1DCED5004C495B /* Inject Commit Hash */,
 				22EEE5D22F1DCED5004C495B /* Sources */,
 				22EEE5D32F1DCED5004C495B /* Frameworks */,
 				22EEE5D42F1DCED5004C495B /* Resources */,
+				22EEE6012F1DCED5004C495B /* Restore Placeholder */,
 			);
 			buildRules = (
 			);
@@ -209,6 +211,47 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		22EEE6002F1DCED5004C495B /* Inject Commit Hash */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Inject Commit Hash";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/scripts/inject-commit-hash.sh\"\n";
+		};
+		22EEE6012F1DCED5004C495B /* Restore Placeholder */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Restore Placeholder";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/scripts/restore-placeholder.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		22EEE5B82F1DCED4004C495B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -243,6 +286,7 @@
 				DEVELOPMENT_TEAM = V882B32FL8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "HoverZoom Extension/Info.plist";
@@ -278,6 +322,7 @@
 				DEVELOPMENT_TEAM = V882B32FL8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "HoverZoom Extension/Info.plist";
