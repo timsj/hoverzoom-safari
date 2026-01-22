@@ -9,10 +9,48 @@ function cLog(msg) {
     }
 }
 
+// Validate URL to prevent SSRF and protocol attacks
+function isValidFetchUrl(urlString) {
+    try {
+        const url = new URL(urlString);
+        // Only allow http and https protocols
+        if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+            return false;
+        }
+        // Block localhost and private IP ranges
+        const hostname = url.hostname.toLowerCase();
+        if (hostname === 'localhost' ||
+            hostname === '127.0.0.1' ||
+            hostname.startsWith('192.168.') ||
+            hostname.startsWith('10.') ||
+            hostname.startsWith('172.16.') ||
+            hostname.startsWith('172.17.') ||
+            hostname.startsWith('172.18.') ||
+            hostname.startsWith('172.19.') ||
+            hostname.startsWith('172.2') ||
+            hostname.startsWith('172.30.') ||
+            hostname.startsWith('172.31.') ||
+            hostname === '0.0.0.0' ||
+            hostname.endsWith('.local')) {
+            return false;
+        }
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 // Performs an ajax request
 async function ajaxRequest(request, sendResponse) {
     const response = request.response;
     const method = request.method;
+
+    // Validate URL before fetching
+    if (!isValidFetchUrl(request.url)) {
+        cLog('Blocked invalid or private URL: ' + request.url);
+        sendResponse(null);
+        return;
+    }
 
     // Prepare fetch options
     const fetchOptions = {

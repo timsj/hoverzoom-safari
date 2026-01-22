@@ -327,7 +327,7 @@ var hoverZoom = {
 
         // needed to flip text tracks on videos
         var styleFlip = document.createElement('style');
-        styleFlip.innerHTML = `
+        styleFlip.textContent = `
             .flipX video::-webkit-media-text-track-display {
                 transform: matrix(-1, 0, 0, 1, 0, 0) !important;
             }
@@ -341,7 +341,7 @@ var hoverZoom = {
 
         // blinker
         var styleBlink = document.createElement('style');
-        styleBlink.innerHTML = `
+        styleBlink.textContent = `
             @keyframes blinkWarning {
                 0% { color: red; }
                 100% { color: white; }
@@ -3187,9 +3187,14 @@ var hoverZoom = {
                 audio = $(audio);
                 audio[0].controls = true;
                 audio[0].src = srcDetails.audioUrl;
-                audio[0].setAttribute('onloadeddata', 'this.volume = ' + options.audioVolume + ';');
+                audio[0].dataset.volume = parseFloat(options.audioVolume) || 0.5;
                 audio.css(audioControlsCss);
                 body.append(audio);
+
+                // Setup script to apply data attributes safely
+                let setupScript = document.createElement('script');
+                setupScript.textContent = 'document.querySelectorAll("[data-volume]").forEach(function(el){el.onloadeddata=function(){this.volume=parseFloat(this.dataset.volume)||0.5;};});';
+                body.append(setupScript);
 
                 let imgDim = hz.getImageDimensions(browser.runtime.getURL('images/spectrogram.png'));
                 let createDataWidth = imgDim.width + popupBorder.width;
@@ -3200,7 +3205,7 @@ var hoverZoom = {
                 let createDataLeft = Math.round(screen.availWidth / 2 - createDataWidth / 2);
 
                 let createData = {
-                    url:'data:text/html,' + body[0].outerHTML,
+                    url:'data:text/html,' + encodeURIComponent(body[0].outerHTML),
                     width:createDataWidth,
                     height:createDataHeight,
                     top:createDataTop,
@@ -3235,25 +3240,50 @@ var hoverZoom = {
                 video[0].style.position = 'absolute';
                 video[0].controls = true;
                 video[0].src = srcDetails.url;
-                video[0].setAttribute('onloadeddata', 'this.volume = ' + options.videoVolume + '; this.muted = ' + options.muteVideos + ';');
+                video[0].dataset.volume = parseFloat(options.videoVolume) || 0.5;
+                video[0].dataset.muted = options.muteVideos ? 'true' : 'false';
                 body.append(video);
 
+                let hasAudio = false;
                 if (srcDetails.audioUrl) {
+                    hasAudio = true;
                     // add audio source if not embedded in video
                     let audio = '<audio/>';
                     audio = $(audio);
                     audio[0].controls = true;
                     audio[0].src = srcDetails.audioUrl;
-                    audio[0].setAttribute('onloadeddata', 'this.volume = ' + options.videoVolume + '; this.muted = ' + options.muteVideos + ';');
+                    audio[0].dataset.volume = parseFloat(options.videoVolume) || 0.5;
+                    audio[0].dataset.muted = options.muteVideos ? 'true' : 'false';
                     body.append(audio);
-                    // plug audio controls (play, pause...) in video
-                    video[0].setAttribute('onplay', 'document.querySelector(\'audio\').play()');
-                    video[0].setAttribute('onpause', 'document.querySelector(\'audio\').pause()');
-                    video[0].setAttribute('onseeked', 'document.querySelector(\'audio\').currentTime = this.currentTime');
-                    // hide audio controls after 2.5s (same as video controls)
-                    audio.controlsTimeout = undefined;
-                    body[0].setAttribute('onmousemove', 'var audio = document.querySelector("audio"); clearTimeout(audio.controlsTimeout); audio.style = "opacity : 1"; audio.controlsTimeout = setTimeout(function() { audio.style = "transition : all ease 1s; opacity : 0" }, 2500)');
                 }
+
+                // Setup script to apply data attributes and sync audio/video safely
+                let setupScript = document.createElement('script');
+                setupScript.textContent = `
+                    document.querySelectorAll('video, audio').forEach(function(el) {
+                        el.onloadeddata = function() {
+                            this.volume = parseFloat(this.dataset.volume) || 0.5;
+                            this.muted = this.dataset.muted === 'true';
+                        };
+                    });
+                    var video = document.querySelector('video');
+                    var audio = document.querySelector('audio');
+                    if (video && audio) {
+                        video.onplay = function() { audio.play(); };
+                        video.onpause = function() { audio.pause(); };
+                        video.onseeked = function() { audio.currentTime = this.currentTime; };
+                        var controlsTimeout;
+                        document.body.onmousemove = function() {
+                            clearTimeout(controlsTimeout);
+                            audio.style.opacity = '1';
+                            controlsTimeout = setTimeout(function() {
+                                audio.style.transition = 'all ease 1s';
+                                audio.style.opacity = '0';
+                            }, 2500);
+                        };
+                    }
+                `;
+                body.append(setupScript);
 
                 // If image bigger than screen, adjust window dimensions to match image's aspect ratio
                 let createDataWidth = srcDetails.naturalWidth + popupBorder.width;
@@ -3279,7 +3309,7 @@ var hoverZoom = {
                 let createDataLeft = Math.round(screen.availWidth / 2 - createDataWidth / 2);
 
                 let createData = {
-                    url:'data:text/html,' + body[0].outerHTML,
+                    url:'data:text/html,' + encodeURIComponent(body[0].outerHTML),
                     width:createDataWidth,
                     height:createDataHeight,
                     top:createDataTop,
@@ -3314,11 +3344,16 @@ var hoverZoom = {
             audio = $(audio);
             audio[0].controls = true;
             audio[0].src = srcDetails.audioUrl;
-            audio[0].setAttribute('onloadeddata', 'this.volume = ' + options.audioVolume + ';');
+            audio[0].dataset.volume = parseFloat(options.audioVolume) || 0.5;
             body.append(audio);
 
+            // Setup script to apply volume safely
+            let setupScript = document.createElement('script');
+            setupScript.textContent = 'document.querySelector("audio").onloadeddata=function(){this.volume=parseFloat(this.dataset.volume)||0.5;};';
+            body.append(setupScript);
+
             let createData = {
-                url:'data:text/html,' + body[0].outerHTML,
+                url:'data:text/html,' + encodeURIComponent(body[0].outerHTML),
                 active:!background
             };
 
@@ -3345,7 +3380,8 @@ var hoverZoom = {
             video[0].style.maxWidth = '100%';
             video[0].controls = true;
             video[0].src = srcDetails.url;
-            video[0].setAttribute('onloadeddata', 'this.volume = ' + options.videoVolume + '; this.muted = ' + options.muteVideos + ';');
+            video[0].dataset.volume = parseFloat(options.videoVolume) || 0.5;
+            video[0].dataset.muted = options.muteVideos ? 'true' : 'false';
             body.append(video);
 
             if (srcDetails.audioUrl) {
@@ -3354,16 +3390,38 @@ var hoverZoom = {
                 audio = $(audio);
                 audio[0].controls = true;
                 audio[0].src = srcDetails.audioUrl;
-                audio[0].setAttribute('onloadeddata', 'this.volume = ' + options.videoVolume + '; this.muted = ' + options.muteVideos + ';');
+                audio[0].dataset.volume = parseFloat(options.videoVolume) || 0.5;
+                audio[0].dataset.muted = options.muteVideos ? 'true' : 'false';
                 body.append(audio);
-                // plug audio controls (play, pause...) in video
-                video[0].setAttribute('onplay', 'document.querySelector(\'audio\').play()');
-                video[0].setAttribute('onpause', 'document.querySelector(\'audio\').pause()');
-                video[0].setAttribute('onseeked', 'document.querySelector(\'audio\').currentTime = this.currentTime');
-                // hide audio controls after 2.5s (same as video controls)
-                audio.controlsTimeout = undefined;
-                body[0].setAttribute('onmousemove', 'var audio = document.querySelector("audio"); clearTimeout(audio.controlsTimeout); audio.style = "opacity : 1"; audio.controlsTimeout = setTimeout(function() { audio.style = "transition : all ease 1s; opacity : 0" }, 2500)');
             }
+
+            // Setup script to apply data attributes and sync audio/video safely
+            let setupScript = document.createElement('script');
+            setupScript.textContent = `
+                document.querySelectorAll('video, audio').forEach(function(el) {
+                    el.onloadeddata = function() {
+                        this.volume = parseFloat(this.dataset.volume) || 0.5;
+                        this.muted = this.dataset.muted === 'true';
+                    };
+                });
+                var video = document.querySelector('video');
+                var audio = document.querySelector('audio');
+                if (video && audio) {
+                    video.onplay = function() { audio.play(); };
+                    video.onpause = function() { audio.pause(); };
+                    video.onseeked = function() { audio.currentTime = this.currentTime; };
+                    var controlsTimeout;
+                    document.body.onmousemove = function() {
+                        clearTimeout(controlsTimeout);
+                        audio.style.opacity = '1';
+                        controlsTimeout = setTimeout(function() {
+                            audio.style.transition = 'all ease 1s';
+                            audio.style.opacity = '0';
+                        }, 2500);
+                    };
+                }
+            `;
+            body.append(setupScript);
 
             // If image bigger than screen, adjust window dimensions to match image's aspect ratio
             let createDataWidth = srcDetails.naturalWidth;
@@ -3381,7 +3439,7 @@ var hoverZoom = {
             }
 
             let createData = {
-                url:'data:text/html,' + body[0].outerHTML,
+                url:'data:text/html,' + encodeURIComponent(body[0].outerHTML),
                 active:!background
             };
 
@@ -4349,8 +4407,8 @@ var hoverZoom = {
     prepareFromDocument:function (link, url, getSrc, isAsync = false) {
         url = url.replace('http:', location.protocol);
         browser.runtime.sendMessage({action:'ajaxRequest', url: url, method: 'GET'}, function(data) {
-            let doc = document.implementation.createHTMLDocument();
-            doc.body.innerHTML = data;
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(data, 'text/html');
             const httpRefresh = doc.querySelector('meta[http-equiv="refresh"][content]');
             if (httpRefresh) {
                 let redirUrl = httpRefresh.content.substr(httpRefresh.content.toLowerCase().indexOf('url=') + 4);
@@ -4783,14 +4841,22 @@ var hoverZoom = {
         });
     },
 
-    // In JavaScript, keys can be strings, numbers, or identifier names WITHOUT single or double quotes
-    // e.g: person = {name:"John", age:31, city:"New York"};
+    // Parse JavaScript object literal string to object
+    // Handles unquoted keys like {name:"John", age:31}
     strToJavascriptObj:function(e) {
-        if (typeof e == "string") {
-            let obj = new Function("return" + e);
+        if (typeof e !== "string") return undefined;
+        try {
+            // First try standard JSON parse
+            return JSON.parse(e);
+        } catch {
             try {
-                return obj();
-            } catch {}
+                // Convert JS object literal to valid JSON by quoting unquoted keys
+                // This handles {key: "value"} -> {"key": "value"}
+                let jsonStr = e.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":');
+                return JSON.parse(jsonStr);
+            } catch {
+                return undefined;
+            }
         }
     }
 };

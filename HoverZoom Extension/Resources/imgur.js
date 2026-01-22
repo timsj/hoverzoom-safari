@@ -22,9 +22,9 @@ hoverZoomPlugins.push({
         }
 
         function htmlDecode(input){
-            var e = document.createElement('div');
+            var e = document.createElement('textarea');
             e.innerHTML = input;
-            return e.textContent;
+            return e.value;
         }
 
         function prepareImgLink() {

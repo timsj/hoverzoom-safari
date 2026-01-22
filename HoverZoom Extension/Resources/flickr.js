@@ -28,9 +28,12 @@ hoverZoomPlugins.push({
             });
         }
 
+        // SECURITY NOTE: XHR hooking is required to intercept Flickr's API responses
+        // which contain high-resolution image URLs ('secret' tokens) not available in page HTML.
+        // This is a privacy/security trade-off necessary for the extension's core functionality.
         // Hook Flickr 'Open' XMLHttpRequests to catch data & metadata associated with pictures displayed
         // These requests are issued by client side to Flickr servers in order to obtain new data when user scrolls down
-        // Hooked data is stored in sessionStorage
+        // Hooked data is stored in sessionStorage and limited to 10 responses
         if ($('script.hoverZoomHook').length == 0) { // Inject hook script in document if not already there
             var hookScript = document.createElement('script');
             hookScript.type = 'text/javascript';

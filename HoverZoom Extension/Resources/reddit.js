@@ -93,8 +93,8 @@ hoverZoomPlugins.push({
       let img = $(this);
       let url = this.children[0].href;
       browser.runtime.sendMessage({action:'ajaxRequest', url: url, method: 'GET'}, function(data) {
-        let doc = document.implementation.createHTMLDocument();
-        doc.body.innerHTML = data;
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(data, 'text/html');
 
         let post = $(doc.querySelector('shreddit-post'));
         let link = post.attr('content-href');
