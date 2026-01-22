@@ -31,17 +31,6 @@ hoverZoomPlugins.push({
             '$1s0'
         );
 
-        // SECURITY NOTE: XHR hooking would intercept Google's API responses
-        // to get high-resolution image URLs. This file (hoverZoomXHROpen.js) is missing
-        // so this functionality is currently disabled.
-        // Hook 'Open' XMLHttpRequests to catch data & metadata associated with pictures
-        // Hooked data is stored in sessionStorage for later use by plug-in
-        if ($('script.hoverZoomXHROpen').length == 0) { // Inject hook script in document if not already there
-            const injectedScript = document.createElement('script');
-            injectedScript.src = browser.runtime.getURL('js/hoverZoomXHROpen.js');
-            (document.head || document.documentElement).appendChild(injectedScript);
-        }
-
         function cleanUrl(url) {
             if (url != undefined) {
                 url = url.replace(/\\\\/g, '\\');
