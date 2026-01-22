@@ -19,28 +19,141 @@
         "persistent": false
     },
 
-    "content_scripts": [{
-        "js": [
-            "jquery.js",
-            "tools.js",
-            "common.js",
-            "hoverzoom.js",
-            "default.js",
-            "reddit.js",
-            "twitter.js",
-            "imgur.js",
-            "youtube.js",
-            "amazon.js",
-            "google.js",
-            "instagram.js",
-            "facebook.js",
-            "pinterest.js",
-            "flickr.js",
-            "content.js"
-        ],
-        "matches": [ "<all_urls>" ],
-        "run_at": "document_end"
-    }],
+    "content_scripts": [
+        {
+            "js": [
+                "jquery.js",
+                "tools.js",
+                "common.js",
+                "hoverzoom.js",
+                "default.js",
+                "content.js"
+            ],
+            "matches": [ "<all_urls>" ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "reddit.js" ],
+            "matches": [ "*://*.reddit.com/*" ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "twitter.js" ],
+            "matches": [
+                "*://*.twitter.com/*",
+                "*://*.x.com/*",
+                "*://*.tweetdeck.com/*"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "imgur.js" ],
+            "matches": [ "*://*.imgur.com/*" ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "youtube.js" ],
+            "matches": [ "*://*.youtube.com/*" ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "amazon.js" ],
+            "matches": [
+                "*://*.amazon.com/*",
+                "*://*.amazon.com.au/*",
+                "*://*.amazon.com.br/*",
+                "*://*.amazon.com.mx/*",
+                "*://*.amazon.com.tr/*",
+                "*://*.amazon.ae/*",
+                "*://*.amazon.ca/*",
+                "*://*.amazon.cn/*",
+                "*://*.amazon.de/*",
+                "*://*.amazon.eg/*",
+                "*://*.amazon.es/*",
+                "*://*.amazon.fr/*",
+                "*://*.amazon.co.jp/*",
+                "*://*.amazon.co.uk/*",
+                "*://*.amazon.in/*",
+                "*://*.amazon.it/*",
+                "*://*.amazon.nl/*",
+                "*://*.amazon.sg/*"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "google.js" ],
+            "matches": [
+                "*://*.google.com/*",
+                "*://*.google.co.uk/*",
+                "*://*.google.ca/*",
+                "*://*.google.com.au/*",
+                "*://*.google.de/*",
+                "*://*.google.fr/*",
+                "*://*.google.es/*",
+                "*://*.google.it/*",
+                "*://*.google.co.jp/*",
+                "*://*.google.co.in/*",
+                "*://*.google.com.br/*",
+                "*://*.google.com.mx/*",
+                "*://*.google.nl/*",
+                "*://*.google.pl/*",
+                "*://*.google.ru/*",
+                "*://*.google.co.kr/*",
+                "*://*.google.se/*",
+                "*://*.google.ch/*",
+                "*://*.google.at/*",
+                "*://*.google.be/*"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "instagram.js" ],
+            "matches": [ "*://*.instagram.com/*" ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "facebook.js" ],
+            "matches": [ "*://*.facebook.com/*" ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "pinterest.js" ],
+            "matches": [
+                "*://*.pinterest.com/*",
+                "*://*.pinterest.ca/*",
+                "*://*.pinterest.co.uk/*",
+                "*://*.pinterest.com.au/*",
+                "*://*.pinterest.de/*",
+                "*://*.pinterest.fr/*",
+                "*://*.pinterest.es/*",
+                "*://*.pinterest.it/*",
+                "*://*.pinterest.jp/*",
+                "*://*.pinterest.co.kr/*",
+                "*://*.pinterest.nl/*",
+                "*://*.pinterest.ch/*",
+                "*://*.pinterest.at/*",
+                "*://*.pinterest.co.nz/*",
+                "*://*.pinterest.com.mx/*",
+                "*://*.pinterest.se/*",
+                "*://*.pinterest.dk/*",
+                "*://*.pinterest.pt/*",
+                "*://*.pinterest.ru/*",
+                "*://*.pinterest.ie/*",
+                "*://*.pinterest.fi/*",
+                "*://*.pinterest.cz/*",
+                "*://*.pinterest.co.in/*"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "js": [ "flickr.js" ],
+            "matches": [
+                "*://*.flickr.com/*",
+                "*://*.flickr.net/*"
+            ],
+            "run_at": "document_end"
+        }
+    ],
 
     "action": {
         "default_popup": "popup.html",
