@@ -138,6 +138,15 @@ input:checked + .slider:before {
     font-size: 11px !important;
 }
 
+.version a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.version a:hover {
+    text-decoration: underline;
+}
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     body {

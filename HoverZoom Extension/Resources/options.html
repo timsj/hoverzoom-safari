@@ -130,6 +130,21 @@
                     <span id="detailsOpacityValue">1</span>
                 </div>
 
+                <div class="setting-row details-checkboxes">
+                    <label>Show in details:</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="showDetailFilename"><span>Filename</span></label>
+                        <label><input type="checkbox" id="showDetailHost"><span>Host</span></label>
+                        <label><input type="checkbox" id="showDetailDimensions"><span>Dimensions</span></label>
+                        <label><input type="checkbox" id="showDetailScale"><span>Scale</span></label>
+                        <label><input type="checkbox" id="showDetailRatio"><span>Ratio</span></label>
+                        <label><input type="checkbox" id="showDetailExtension"><span>Extension</span></label>
+                        <label><input type="checkbox" id="showDetailContentLength"><span>File size</span></label>
+                        <label><input type="checkbox" id="showDetailLastModified"><span>Last modified</span></label>
+                        <label><input type="checkbox" id="showDetailDuration"><span>Duration</span></label>
+                    </div>
+                </div>
+
                 <div class="setting-row">
                     <label for="fontSize">Font size (px):</label>
                     <input type="number" id="fontSize" min="8" max="24" step="1">
@@ -224,7 +239,7 @@
             <button id="saveBtn" class="primary">Save Options</button>
             <button id="resetBtn">Reset to Defaults</button>
             <span id="statusMsg"></span>
-            <p class="version">v1.0 (__COMMIT_HASH__)</p>
+            <p class="version"><a href="https://github.com/timsj/hoverzoom-safari/commit/__COMMIT_HASH__" target="_blank">v1.0 (__COMMIT_HASH__)</a></p>
         </footer>
     </div>
 
