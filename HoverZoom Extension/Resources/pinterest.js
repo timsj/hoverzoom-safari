@@ -42,7 +42,12 @@ hoverZoomPlugins.push({
 
     // imgs without srcset
     patches.forEach((patch) => {
-      hoverZoom.urlReplace(res, "img[src]:not([srcset])", /\/\d+x(\d+)?\//, patch);
+      hoverZoom.urlReplace(
+        res,
+        "img[src]:not([srcset])",
+        /\/\d+x(\d+)?\//,
+        patch,
+      );
     });
 
     // background imgs
@@ -55,7 +60,9 @@ hoverZoomPlugins.push({
       let reUrl = /.*url\s*\(\s*(.*)\s*\).*/i;
       backgroundImage = backgroundImage.replace(reUrl, "$1");
       // remove leading & trailing quotes
-      let backgroundImageUrl = backgroundImage.replace(/^['"]/, "").replace(/['"]+$/, "");
+      let backgroundImageUrl = backgroundImage
+        .replace(/^['"]/, "")
+        .replace(/['"]+$/, "");
 
       patches.forEach((patch) => {
         let fullsizeUrl = backgroundImageUrl.replace(/\/\d+x(\d+)?\//, patch);
@@ -95,67 +102,77 @@ hoverZoomPlugins.push({
           return;
         }
 
-        browser.runtime.sendMessage({ action: "ajaxGet", url: href }, function (response) {
-          if (response == null) {
-            return;
-          }
-
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(response, "text/html");
-
-          if (doc.scripts == undefined) return;
-          const script = Array.from(doc.scripts).find((s) => s.id === "__PWS_INITIAL_PROPS__");
-          if (!script) return;
-          const jObj = JSON.parse(script.text);
-          const pinData = jObj.initialReduxState.pins[pin];
-          if (!pinData) return;
-          const videos = pinData.videos;
-          const images = pinData.images;
-          const story_pin_data = pinData.story_pin_data;
-          const caption = pinData.rich_metadata?.title || pinData.title || pinData.seo_title;
-          let video_list = undefined;
-          let src = undefined;
-
-          if (videos) {
-            video_list = videos.video_list;
-          } else if (story_pin_data) {
-            video_list = story_pin_data?.pages[0]?.video?.video_list;
-            if (video_list == undefined) {
-              //check blocks
-              video_list = story_pin_data?.pages[0]?.blocks[0]?.video?.video_list;
+        browser.runtime.sendMessage(
+          { action: "ajaxGet", url: href },
+          function (response) {
+            if (response == null) {
+              return;
             }
-          }
 
-          if (video_list) {
-            // MP4 or HLS format
-            src =
-              video_list?.V_720P?.url ||
-              video_list?.V_EXP7?.url ||
-              video_list?.V_EXP6?.url ||
-              video_list?.V_EXP5?.url ||
-              video_list?.V_EXP4?.url ||
-              video_list?.V_EXP3?.url ||
-              video_list?.V_HLSV4?.url ||
-              video_list?.V_HLSV3_MOBILE?.url;
-          }
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(response, "text/html");
 
-          if (src === undefined) {
-            src = images?.orig?.url;
-          }
+            if (doc.scripts == undefined) return;
+            const script = Array.from(doc.scripts).find(
+              (s) => s.id === "__PWS_INITIAL_PROPS__",
+            );
+            if (!script) return;
+            const jObj = JSON.parse(script.text);
+            const pinData = jObj.initialReduxState.pins[pin];
+            if (!pinData) return;
+            const videos = pinData.videos;
+            const images = pinData.images;
+            const story_pin_data = pinData.story_pin_data;
+            const caption =
+              pinData.rich_metadata?.title ||
+              pinData.title ||
+              pinData.seo_title;
+            let video_list = undefined;
+            let src = undefined;
 
-          if (!src) return;
+            if (videos) {
+              video_list = videos.video_list;
+            } else if (story_pin_data) {
+              video_list = story_pin_data?.pages[0]?.video?.video_list;
+              if (video_list == undefined) {
+                //check blocks
+                video_list =
+                  story_pin_data?.pages[0]?.blocks[0]?.video?.video_list;
+              }
+            }
 
-          link.data().hoverZoomSrc = [src];
-          link.data().hoverZoomCaption = caption;
-          link.data().hoverZoomPin = pin;
-          link.data().hoverZoomPinUrl = src;
-          link.data().hoverZoomPinCaption = caption;
+            if (video_list) {
+              // MP4 or HLS format
+              src =
+                video_list?.V_720P?.url ||
+                video_list?.V_EXP7?.url ||
+                video_list?.V_EXP6?.url ||
+                video_list?.V_EXP5?.url ||
+                video_list?.V_EXP4?.url ||
+                video_list?.V_EXP3?.url ||
+                video_list?.V_HLSV4?.url ||
+                video_list?.V_HLSV3_MOBILE?.url;
+            }
 
-          res = [link];
-          callback($(res), pluginName);
-          // Image/video is displayed iff cursor is still over the image/video
-          if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
-        });
+            if (src === undefined) {
+              src = images?.orig?.url;
+            }
+
+            if (!src) return;
+
+            link.data().hoverZoomSrc = [src];
+            link.data().hoverZoomCaption = caption;
+            link.data().hoverZoomPin = pin;
+            link.data().hoverZoomPinUrl = src;
+            link.data().hoverZoomPinCaption = caption;
+
+            res = [link];
+            callback($(res), pluginName);
+            // Image/video is displayed iff cursor is still over the image/video
+            if (link.data().hoverZoomMouseOver)
+              hoverZoom.displayPicFromElement(link);
+          },
+        );
       })
       .one("mouseleave", function () {
         const link = $(this);

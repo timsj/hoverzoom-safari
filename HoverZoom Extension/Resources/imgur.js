@@ -51,7 +51,10 @@ hoverZoomPlugins.push({
       // strip query parameters
       href = href.split("?")[0];
 
-      if (options.zoomVideos && (href.substr(-3) == "gif" || href.substr(-4) == "gifv")) {
+      if (
+        options.zoomVideos &&
+        (href.substr(-3) == "gif" || href.substr(-4) == "gifv")
+      ) {
         data.hoverZoomSrc = [
           href.replace(/\.gifv?/, ".mp4"),
           href.replace(/\.gifv?/, ".webm"),
@@ -60,7 +63,7 @@ hoverZoomPlugins.push({
         res.push(link);
       } else {
         var matches = href.match(
-          /(?:\/(a|gallery|signin))?\/([^\W_]{5,8})(?:\/|\.[a-zA-Z]+|#([^\W_]{5,8}|\d+))?(\/new|\/all|\?.*)?$/
+          /(?:\/(a|gallery|signin))?\/([^\W_]{5,8})(?:\/|\.[a-zA-Z]+|#([^\W_]{5,8}|\d+))?(\/new|\/all|\?.*)?$/,
         );
         if (matches && matches[2]) {
           var view = matches[1];
@@ -81,7 +84,9 @@ hoverZoomPlugins.push({
 
               // Future alternative: https://imgur.com/ajaxalbums/getimages/{hash}/hit.json?all=true
               var albumUrl = "https://api.imgur.com/3/album/" + hash + ".json";
-              $.ajax(albumUrl, { headers: { Authorization: "Client-ID 1d8d9b36339e0e2" } })
+              $.ajax(albumUrl, {
+                headers: { Authorization: "Client-ID 1d8d9b36339e0e2" },
+              })
                 .done(function (imgur) {
                   if (imgur.error) {
                     data.hoverZoomSrc = createUrls(hash);
@@ -91,8 +96,14 @@ hoverZoomPlugins.push({
                       var urls = [img.link],
                         caption = img.title != null ? img.title : "",
                         alreadyAdded = false;
-                      for (var i = 0, l = data.hoverZoomGallerySrc.length; i < l; i++) {
-                        if (data.hoverZoomGallerySrc[i].indexOf(urls[0]) != -1) {
+                      for (
+                        var i = 0, l = data.hoverZoomGallerySrc.length;
+                        i < l;
+                        i++
+                      ) {
+                        if (
+                          data.hoverZoomGallerySrc[i].indexOf(urls[0]) != -1
+                        ) {
                           alreadyAdded = true;
                           break;
                         }
@@ -110,7 +121,8 @@ hoverZoomPlugins.push({
                       }
                       if (anchor) {
                         if (
-                          (anchor.match(/^\d+$/) && index == parseInt(anchor)) ||
+                          (anchor.match(/^\d+$/) &&
+                            index == parseInt(anchor)) ||
                           anchor == img.id
                         )
                           data.hoverZoomGalleryIndex = index;
@@ -122,7 +134,7 @@ hoverZoomPlugins.push({
                 .fail(function (jqXHR) {
                   if (jqXHR.status === 429) {
                     console.info(
-                      "imgur.com is enforcing rate limiting on hoverzoom+ extension. Album preview won't work until this problem is resolved."
+                      "imgur.com is enforcing rate limiting on hoverzoom+ extension. Album preview won't work until this problem is resolved.",
                     );
                     return;
                   }
@@ -175,7 +187,7 @@ hoverZoomPlugins.push({
 
     // Every sites
     $(
-      'a[href*="//imgur.com/"], a[href*="//www.imgur.com/"], a[href*="//i.imgur.com/"], a[href*="//m.imgur.com/"], a[href*="//i.stack.imgur.com/"]'
+      'a[href*="//imgur.com/"], a[href*="//www.imgur.com/"], a[href*="//i.imgur.com/"], a[href*="//m.imgur.com/"], a[href*="//i.stack.imgur.com/"]',
     ).each(prepareImgLink);
 
     // On imgur.com (galleries, etc)
@@ -196,11 +208,15 @@ hoverZoomPlugins.push({
         var reUrl = /.*url\s*\(\s*(.*)\s*\).*/i;
         backgroundImage = backgroundImage.replace(reUrl, "$1");
         // remove leading & trailing quotes
-        var backgroundImageUrl = backgroundImage.replace(/^['"]/, "").replace(/['"]+$/, "");
+        var backgroundImageUrl = backgroundImage
+          .replace(/^['"]/, "")
+          .replace(/['"]+$/, "");
         // check if url is a thumbnail url
         //ex: "//i.imgur.com/N8hBuw7b.jpg"
         var reThumb = /(.*imgur.*\/.*)b\./i;
-        var fullsizeUrl = backgroundImageUrl.replace(reThumb, "$1.").replace("_d.", ".");
+        var fullsizeUrl = backgroundImageUrl
+          .replace(reThumb, "$1.")
+          .replace("_d.", ".");
         if (fullsizeUrl !== backgroundImageUrl) {
           var link = $(this);
           if (link.data().hoverZoomSrc === undefined) {
@@ -234,7 +250,8 @@ hoverZoomPlugins.push({
 
         callback(link, name);
         // Gallery is displayed iff the cursor is still over the link
-        if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+        if (link.data().hoverZoomMouseOver)
+          hoverZoom.displayPicFromElement(link);
       })
       .one("mouseleave", function () {
         const link = $(this);
@@ -269,43 +286,49 @@ hoverZoomPlugins.push({
           return;
         }
 
-        browser.runtime.sendMessage({ action: "ajaxGet", url: href }, function (response) {
-          if (response == null) {
-            return;
-          }
+        browser.runtime.sendMessage(
+          { action: "ajaxGet", url: href },
+          function (response) {
+            if (response == null) {
+              return;
+            }
 
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(response, "text/html");
-          if (doc.scripts == undefined) return;
-          let scripts = Array.from(doc.scripts);
-          scripts = scripts.filter((script) => /window.postDataJSON=/.test(script.text));
-          if (scripts.length != 1) return;
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(response, "text/html");
+            if (doc.scripts == undefined) return;
+            let scripts = Array.from(doc.scripts);
+            scripts = scripts.filter((script) =>
+              /window.postDataJSON=/.test(script.text),
+            );
+            if (scripts.length != 1) return;
 
-          const scriptText = scripts[0].text;
-          const index1 = scriptText.indexOf("{");
-          const index2 = scriptText.lastIndexOf("}");
-          var jsonData = scriptText.substring(index1, index2 + 1);
+            const scriptText = scripts[0].text;
+            const index1 = scriptText.indexOf("{");
+            const index2 = scriptText.lastIndexOf("}");
+            var jsonData = scriptText.substring(index1, index2 + 1);
 
-          var j = undefined;
-          try {
-            jsonData = escapeJSON(jsonData);
-            j = JSON.parse(jsonData);
-            var gallery = [];
-            var captions = [];
-            j.media.forEach((i) => gallery.push([i.url]));
-            j.media.forEach((i) => {
-              let caption = i.metadata.title + i.metadata.description || j.title;
-              captions.push(caption);
-            });
-            HZimgur[id] = {};
-            HZimgur[id].gallery = gallery;
-            HZimgur[id].captions = captions;
-            sessionStorage.setItem("HZimgur", JSON.stringify(HZimgur));
-            displayGallery(link, gallery, captions);
-          } catch (e) {
-            return;
-          }
-        });
+            var j = undefined;
+            try {
+              jsonData = escapeJSON(jsonData);
+              j = JSON.parse(jsonData);
+              var gallery = [];
+              var captions = [];
+              j.media.forEach((i) => gallery.push([i.url]));
+              j.media.forEach((i) => {
+                let caption =
+                  i.metadata.title + i.metadata.description || j.title;
+                captions.push(caption);
+              });
+              HZimgur[id] = {};
+              HZimgur[id].gallery = gallery;
+              HZimgur[id].captions = captions;
+              sessionStorage.setItem("HZimgur", JSON.stringify(HZimgur));
+              displayGallery(link, gallery, captions);
+            } catch (e) {
+              return;
+            }
+          },
+        );
       })
       .one("mouseleave", function () {
         const link = $(this);

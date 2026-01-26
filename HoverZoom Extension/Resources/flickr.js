@@ -76,7 +76,12 @@ hoverZoomPlugins.push({
       (document.head || document.documentElement).appendChild(hookScript);
     }
 
-    function findClosingBracketMatchIndex(str, pos, openBracket = "{", closeBracket = "}") {
+    function findClosingBracketMatchIndex(
+      str,
+      pos,
+      openBracket = "{",
+      closeBracket = "}",
+    ) {
       let openBracketCount = 0;
       let givenBracketPosition = -1;
       let index = -1;
@@ -101,7 +106,13 @@ hoverZoomPlugins.push({
     // Find key(s) in JSON object and return corresponding value(s) and path(s)
     // If key not found then return []
     // https://gist.github.com/killants/569c4af5f2983e340512916e15a48ac0
-    function getKeysInObject(jsonObj, searchKey, isRegex, maxDeepLevel, currDeepLevel) {
+    function getKeysInObject(
+      jsonObj,
+      searchKey,
+      isRegex,
+      maxDeepLevel,
+      currDeepLevel,
+    ) {
       var bShowInfo = false;
 
       maxDeepLevel = maxDeepLevel || maxDeepLevel == 0 ? maxDeepLevel : 100;
@@ -148,7 +159,7 @@ hoverZoomPlugins.push({
               searchKey,
               isRegex,
               maxDeepLevel,
-              currDeepLevel + 1
+              currDeepLevel + 1,
             );
 
             for (var e = 0; e < deepKeys.length; e++) {
@@ -165,7 +176,13 @@ hoverZoomPlugins.push({
     // Find value(s) in JSON object and return corresponding key(s) and path(s)
     // If value not found then return []
     // ref: https://gist.github.com/killants/569c4af5f2983e340512916e15a48ac0
-    function getValuesInObject(jsonObj, searchValue, isRegex, maxDeepLevel, currDeepLevel) {
+    function getValuesInObject(
+      jsonObj,
+      searchValue,
+      isRegex,
+      maxDeepLevel,
+      currDeepLevel,
+    ) {
       var bShowInfo = false;
 
       maxDeepLevel = maxDeepLevel || maxDeepLevel == 0 ? maxDeepLevel : 100;
@@ -203,7 +220,7 @@ hoverZoomPlugins.push({
               searchValue,
               isRegex,
               maxDeepLevel,
-              currDeepLevel + 1
+              currDeepLevel + 1,
             );
             for (var e = 0; e < deepKeys.length; e++) {
               // update path backwards
@@ -254,13 +271,21 @@ hoverZoomPlugins.push({
       if (modelExportJson == null) {
         if (document.scripts == undefined) return null;
         let scripts = Array.from(document.scripts);
-        let goodScripts = scripts.filter((script) => /modelExport/.test(script.text));
+        let goodScripts = scripts.filter((script) =>
+          /modelExport/.test(script.text),
+        );
         if (goodScripts.length != 1) return null;
         let dataFromScript = goodScripts[0].text;
         let idxJsonBegin = dataFromScript.indexOf("modelExport: ");
         idxJsonBegin = dataFromScript.indexOf("{", idxJsonBegin);
-        let idxJsonEnd = findClosingBracketMatchIndex(dataFromScript, idxJsonBegin);
-        var json2parse = dataFromScript.substring(idxJsonBegin - 1, idxJsonEnd + 1);
+        let idxJsonEnd = findClosingBracketMatchIndex(
+          dataFromScript,
+          idxJsonBegin,
+        );
+        var json2parse = dataFromScript.substring(
+          idxJsonBegin - 1,
+          idxJsonEnd + 1,
+        );
         try {
           modelExportJson = JSON.parse(json2parse);
         } catch (e) {}
@@ -272,7 +297,7 @@ hoverZoomPlugins.push({
       $(values).each(function () {
         let o = getObjectFromPath(
           modelExportJson,
-          this.path.substring(0, this.path.lastIndexOf("["))
+          this.path.substring(0, this.path.lastIndexOf("[")),
         ); // get parent object
         let valuesWithUrl = getValuesInObject(o, id + "_", true);
         if (valuesWithUrl.length > 0) {
@@ -298,7 +323,7 @@ hoverZoomPlugins.push({
       $(values).each(function () {
         let o = getObjectFromPath(
           hookedDataJson,
-          this.path.substring(0, this.path.lastIndexOf("["))
+          this.path.substring(0, this.path.lastIndexOf("[")),
         ); // get parent object
         let valuesWithUrl = getValuesInObject(o, id + "_", true);
         if (valuesWithUrl.length > 0) {
@@ -340,11 +365,13 @@ hoverZoomPlugins.push({
 
       let matchesImgBuddy = url.match(regexImgBuddy);
       let idImgBuddy = null;
-      if (matchesImgBuddy) idImgBuddy = matchesImgBuddy.length > 1 ? matchesImgBuddy[1] : null;
+      if (matchesImgBuddy)
+        idImgBuddy = matchesImgBuddy.length > 1 ? matchesImgBuddy[1] : null;
 
       let matchesImgCover = url.match(regexImgCover);
       let idImgCover = null;
-      if (matchesImgCover) idImgCover = matchesImgCover.length > 1 ? matchesImgCover[1] : null;
+      if (matchesImgCover)
+        idImgCover = matchesImgCover.length > 1 ? matchesImgCover[1] : null;
 
       let id = null;
       if (idImg) id = idImg;
@@ -361,13 +388,16 @@ hoverZoomPlugins.push({
         var dataFromModelExportJson = null;
         var dataFromHookedDataJson = null;
         dataFromModelExportJson = searchModelExport(id);
-        if (dataFromModelExportJson == null) dataFromHookedDataJson = searchHookedDataA(id);
+        if (dataFromModelExportJson == null)
+          dataFromHookedDataJson = searchHookedDataA(id);
       }
 
       // extract url & metadata
       if (storedDataJson) extractData(link, storedDataJson, id);
-      else if (dataFromModelExportJson) extractData(link, dataFromModelExportJson, id);
-      else if (dataFromHookedDataJson) extractData(link, dataFromHookedDataJson, id);
+      else if (dataFromModelExportJson)
+        extractData(link, dataFromModelExportJson, id);
+      else if (dataFromHookedDataJson)
+        extractData(link, dataFromHookedDataJson, id);
     }
 
     function extractData(link, dataJson, id) {
@@ -434,7 +464,8 @@ hoverZoomPlugins.push({
       var meta = {};
       if (link.data().meta) meta = link.data().meta;
       try {
-        if (typeof dataJson.description == "string") meta.description = dataJson.description;
+        if (typeof dataJson.description == "string")
+          meta.description = dataJson.description;
         if (
           typeof dataJson.description == "object" &&
           typeof dataJson.description._content == "string"
@@ -452,8 +483,10 @@ hoverZoomPlugins.push({
         if (dataJson.viewCount) meta.views = dataJson.viewCount.toString();
         if (dataJson.count_faves) meta.faves = dataJson.count_faves.toString();
         if (dataJson.faveCount) meta.faves = dataJson.faveCount.toString();
-        if (dataJson.count_comments) meta.comments = dataJson.count_comments.toString();
-        if (dataJson.commentCount) meta.comments = dataJson.commentCount.toString();
+        if (dataJson.count_comments)
+          meta.comments = dataJson.count_comments.toString();
+        if (dataJson.commentCount)
+          meta.comments = dataJson.commentCount.toString();
         if (dataJson.datetaken) meta.datetaken = dataJson.datetaken;
       } catch (e) {}
       link.data().meta = meta;
@@ -495,11 +528,13 @@ hoverZoomPlugins.push({
                   }
 
                   // sort by height
-                  let sortedsizes = responseJson.sizes.size.sort(function (a, b) {
-                    if (parseInt(a.height) > parseInt(b.height)) return -1;
-                    if (parseInt(a.height) < parseInt(b.height)) return 1;
-                    return 0;
-                  });
+                  let sortedsizes = responseJson.sizes.size.sort(
+                    function (a, b) {
+                      if (parseInt(a.height) > parseInt(b.height)) return -1;
+                      if (parseInt(a.height) < parseInt(b.height)) return 1;
+                      return 0;
+                    },
+                  );
                   let fullsizeUrl = sortedsizes[0].source;
 
                   // store fullsizeUrl in sessionStorage
@@ -516,7 +551,7 @@ hoverZoomPlugins.push({
                     }
                     callback(link, name);
                   }
-                }
+                },
               );
             } else {
               cLog("photo fullsizeUrl (from sessionStorage):" + fullsizeUrl);
@@ -535,32 +570,36 @@ hoverZoomPlugins.push({
 
     // load href and extract photo url
     function loadHref(link, href) {
-      browser.runtime.sendMessage({ action: "ajaxGet", url: href }, function (response) {
-        if (response == null) {
-          return;
-        }
+      browser.runtime.sendMessage(
+        { action: "ajaxGet", url: href },
+        function (response) {
+          if (response == null) {
+            return;
+          }
 
-        const index1 = response.indexOf('{"photoModel":');
-        if (index1 === -1) {
-          return;
-        }
-        const index2 = hoverZoom.matchBracket(response, index1); // find closing "}"
-        const usefulData = response.substring(index1, index2 + 1);
-        try {
-          const responseJson = JSON.parse(usefulData);
-          const fullsize = responseJson.photoModel.descendingSizes[0].url;
-          const caption = `${responseJson.photoModel.title} - ${responseJson.photoModel.description}`;
-          link.data().hoverZoomSrc = [fullsize];
-          link.data().hoverZoomCaption = caption;
-          var res = [];
-          res.push(link);
-          callback($(res), name);
-          // Image is displayed if the cursor is still over the link
-          if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
-        } catch (e) {
-          return;
-        }
-      });
+          const index1 = response.indexOf('{"photoModel":');
+          if (index1 === -1) {
+            return;
+          }
+          const index2 = hoverZoom.matchBracket(response, index1); // find closing "}"
+          const usefulData = response.substring(index1, index2 + 1);
+          try {
+            const responseJson = JSON.parse(usefulData);
+            const fullsize = responseJson.photoModel.descendingSizes[0].url;
+            const caption = `${responseJson.photoModel.title} - ${responseJson.photoModel.description}`;
+            link.data().hoverZoomSrc = [fullsize];
+            link.data().hoverZoomCaption = caption;
+            var res = [];
+            res.push(link);
+            callback($(res), name);
+            // Image is displayed if the cursor is still over the link
+            if (link.data().hoverZoomMouseOver)
+              hoverZoom.displayPicFromElement(link);
+          } catch (e) {
+            return;
+          }
+        },
+      );
     }
 
     // links
@@ -603,7 +642,9 @@ hoverZoomPlugins.push({
         if (!idImg) return;
 
         // search for idImg among hooked data
-        let hd = hookedDataJsonA.find((j) => j.photos?.photo.find((i) => i.id == idImg));
+        let hd = hookedDataJsonA.find((j) =>
+          j.photos?.photo.find((i) => i.id == idImg),
+        );
         if (!hd) return;
         let photo = hd.photos.photo.find((i) => i.id == idImg);
         let owner = photo.owner;
@@ -628,9 +669,14 @@ hoverZoomPlugins.push({
       const reUrl = /.*url\s*\(\s*(.*)\s*\).*/i;
       backgroundImage = backgroundImage.replace(reUrl, "$1");
       // remove leading & trailing quotes
-      var backgroundImageUrl = backgroundImage.replace(/^['"]/, "").replace(/['"]+$/, "");
+      var backgroundImageUrl = backgroundImage
+        .replace(/^['"]/, "")
+        .replace(/['"]+$/, "");
 
-      var fullsizeUrl = backgroundImageUrl.replace(/(\/buddyicons\/\d+@N\d+).*/, "$1_r.jpg");
+      var fullsizeUrl = backgroundImageUrl.replace(
+        /(\/buddyicons\/\d+@N\d+).*/,
+        "$1_r.jpg",
+      );
       if (fullsizeUrl != backgroundImageUrl) {
         if (link.data().hoverZoomSrc == undefined) {
           link.data().hoverZoomSrc = [];
@@ -675,7 +721,10 @@ var hoverZoomPluginFlickerA = {
     // Links to flickr pages. Requires API calls.
     var filter = 'a[href*="flickr.com/photos/"]';
     if (document.location.hostname == "www.flickr.com") {
-      if ($(".photo-page-view").length || $(document.body).hasClass("lightbox")) {
+      if (
+        $(".photo-page-view").length ||
+        $(document.body).hasClass("lightbox")
+      ) {
         return;
       }
       filter = 'a[href*="/photos/"]';
@@ -725,7 +774,8 @@ var hoverZoomPluginFlickerA = {
     }
     var data = link.data();
     // Check if the url was stored
-    var cachePrefix = "cache_FlickrPhoto_" + (options.showHighRes ? "hi" : "lo") + "_";
+    var cachePrefix =
+      "cache_FlickrPhoto_" + (options.showHighRes ? "hi" : "lo") + "_";
     sessionStorageGet(cachePrefix + photoId, (storedUrl) => {
       if (storedUrl) {
         data.hoverZoomSrc = [storedUrl];

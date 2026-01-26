@@ -124,7 +124,7 @@ async function onMessage(message, sender, sendResponse) {
           url: message.url,
           headers: message.headers,
         },
-        sendResponse
+        sendResponse,
       );
       break;
 
@@ -135,7 +135,7 @@ async function onMessage(message, sender, sendResponse) {
           response: message.response,
           url: message.url,
         },
-        sendResponse
+        sendResponse,
       );
       break;
 
@@ -174,12 +174,15 @@ async function onMessage(message, sender, sendResponse) {
       break;
 
     case "openViewTab":
-      browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        if (tabs[0]) {
-          message.createData.index = tabs[0].index + 1;
-        }
-        browser.tabs.create(message.createData);
-      });
+      browser.tabs.query(
+        { active: true, currentWindow: true },
+        function (tabs) {
+          if (tabs[0]) {
+            message.createData.index = tabs[0].index + 1;
+          }
+          browser.tabs.create(message.createData);
+        },
+      );
       break;
 
     case "banImage":
@@ -215,7 +218,9 @@ async function banImage(message) {
       update = true;
     }
     if (update) {
-      await browser.storage.local.set({ HoverZoomBannedUrls: JSON.stringify(bannedUrls) });
+      await browser.storage.local.set({
+        HoverZoomBannedUrls: JSON.stringify(bannedUrls),
+      });
     }
   } catch {}
 }

@@ -92,7 +92,13 @@ hoverZoomPlugins.push({
         .each(function () {
           try {
             const j = JSON.parse($(this).text());
-            const values = hoverZoom.getValuesInJsonObject(j, srcId, false, true, false); // look for a partial match
+            const values = hoverZoom.getValuesInJsonObject(
+              j,
+              srcId,
+              false,
+              true,
+              false,
+            ); // look for a partial match
             if (values.length == 0) return true; // try next script
             $(values).each(function () {
               var gp = hoverZoom.getJsonObjectFromPath(j, this.path, 2); // get grand-parent object
@@ -110,14 +116,23 @@ hoverZoomPlugins.push({
       if (fullsizeUrl) return fullsizeUrl;
 
       // search hooked data
-      var HZFacebookOpenData = safeJsonParse(sessionStorage.getItem("HZFacebookOpenData"), []);
+      var HZFacebookOpenData = safeJsonParse(
+        sessionStorage.getItem("HZFacebookOpenData"),
+        [],
+      );
       $(HZFacebookOpenData)
         .filter(function () {
           return JSON.stringify(this).indexOf(srcId) != -1;
         })
         .each(function () {
           const j = this;
-          const values = hoverZoom.getValuesInJsonObject(j, srcId, false, true, false); // look for a partial match
+          const values = hoverZoom.getValuesInJsonObject(
+            j,
+            srcId,
+            false,
+            true,
+            false,
+          ); // look for a partial match
           if (values.length == 0) return true; // try next hooked data
           $(values).each(function () {
             var gp = hoverZoom.getJsonObjectFromPath(j, this.path, 2); // get grand-parent object
@@ -147,7 +162,13 @@ hoverZoomPlugins.push({
         .each(function () {
           try {
             const j = JSON.parse($(this).text());
-            const values = hoverZoom.getValuesInJsonObject(j, username, false, true, false); // look for a partial match
+            const values = hoverZoom.getValuesInJsonObject(
+              j,
+              username,
+              false,
+              true,
+              false,
+            ); // look for a partial match
             if (values.length == 0) return true; // try next script
             $(values).each(function () {
               var p = hoverZoom.getJsonObjectFromPath(j, this.path, 1); // get parent object
@@ -166,14 +187,23 @@ hoverZoomPlugins.push({
       if (id) return id;
 
       // search hooked data
-      var HZFacebookOpenData = safeJsonParse(sessionStorage.getItem("HZFacebookOpenData"), []);
+      var HZFacebookOpenData = safeJsonParse(
+        sessionStorage.getItem("HZFacebookOpenData"),
+        [],
+      );
       $(HZFacebookOpenData)
         .filter(function () {
           return JSON.stringify(this).indexOf(username) != -1;
         })
         .each(function () {
           const j = this;
-          const values = hoverZoom.getValuesInJsonObject(j, username, false, true, false); // look for a partial match
+          const values = hoverZoom.getValuesInJsonObject(
+            j,
+            username,
+            false,
+            true,
+            false,
+          ); // look for a partial match
           if (values.length == 0) return true; // try next hooked data
           $(values).each(function () {
             var p = hoverZoom.getJsonObjectFromPath(j, this.path, 1); // get parent object
@@ -209,7 +239,8 @@ hoverZoomPlugins.push({
     // ["DTSGInitData",[],{"token":"AQGNKxGZChye:AQE6nMJf1oiR","async_get_token":"AQxMihxz0r8DhmCe4Ga4XeM2jBWley10P7nMQKYX8Hn1YA:AQwKhv4RPLljN0sU78j60-zxEHL02GUd8HzBYH5RMqXflg"},3515]
     function findFbDtsg() {
       let index0 = innerHTML.indexOf('["DTSGInitialData",[],{"token":');
-      if (index0 == -1) index0 = innerHTML.indexOf('["DTSGInitData",[],{"token":');
+      if (index0 == -1)
+        index0 = innerHTML.indexOf('["DTSGInitData",[],{"token":');
       let index1 = -1;
       if (index0 != -1) index1 = innerHTML.indexOf('{"token":', index0);
       else index1 = innerHTML.indexOf('{"token":');
@@ -259,7 +290,9 @@ hoverZoomPlugins.push({
             doc_id_CometPhotoRootContentQuery,
           success: function (response) {
             try {
-              const r = response.split("\r\n").filter((s) => s.indexOf("currMedia") != -1)[0];
+              const r = response
+                .split("\r\n")
+                .filter((s) => s.indexOf("currMedia") != -1)[0];
               if (r == undefined) return;
               const j = JSON.parse(r);
               const uri = j["data"]["currMedia"]["image"]["uri"];
@@ -267,7 +300,8 @@ hoverZoomPlugins.push({
                 link.data().hoverZoomSrc = [uri];
                 callback(link, pluginName);
                 // Image is displayed if the cursor is still over the link
-                if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+                if (link.data().hoverZoomMouseOver)
+                  hoverZoom.displayPicFromElement(link);
               }
             } catch {}
           },
@@ -294,15 +328,18 @@ hoverZoomPlugins.push({
         let regexMarketId = /\/marketplace\/item\/(\d+).*/;
         let matchesMarketId = href.match(regexMarketId);
         let marketId = null;
-        if (matchesMarketId) marketId = matchesMarketId.length > 1 ? matchesMarketId[1] : null;
+        if (matchesMarketId)
+          marketId = matchesMarketId.length > 1 ? matchesMarketId[1] : null;
         if (marketId == null) return;
 
         // reuse previous result
         if (link.data().hoverZoomFacebookMarketId == marketId) {
           if (link.data().hoverZoomFacebookMarketGallery) {
-            link.data().hoverZoomGallerySrc = link.data().hoverZoomFacebookMarketGallery;
+            link.data().hoverZoomGallerySrc =
+              link.data().hoverZoomFacebookMarketGallery;
             // Image is displayed if the cursor is still over the link
-            if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+            if (link.data().hoverZoomMouseOver)
+              hoverZoom.displayPicFromElement(link);
             return;
           }
         }
@@ -332,7 +369,11 @@ hoverZoomPlugins.push({
           success: function (response) {
             try {
               const j = JSON.parse(response);
-              const keys = hoverZoom.getKeysInJsonObject(j, "listing_photos", false);
+              const keys = hoverZoom.getKeysInJsonObject(
+                j,
+                "listing_photos",
+                false,
+              );
               if (keys.length != 1) return;
               const gallery = keys[0].value.map((k) => [k.image.uri]);
               link.data().hoverZoomSrc = undefined;
@@ -342,7 +383,8 @@ hoverZoomPlugins.push({
               link.data().hoverZoomGalleryIndex = 0;
               callback(link, pluginName);
               // Image is displayed if the cursor is still over the link
-              if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+              if (link.data().hoverZoomMouseOver)
+                hoverZoom.displayPicFromElement(link);
             } catch {}
           },
           error: function (response) {
@@ -368,7 +410,8 @@ hoverZoomPlugins.push({
         let regexProfileId = /\/marketplace\/profile\/(\d+).*/;
         let matchesProfileId = href.match(regexProfileId);
         let profileId = null;
-        if (matchesProfileId) profileId = matchesProfileId.length > 1 ? matchesProfileId[1] : null;
+        if (matchesProfileId)
+          profileId = matchesProfileId.length > 1 ? matchesProfileId[1] : null;
         if (profileId == null) return;
 
         if (fb_dtsg == undefined) {
@@ -390,9 +433,17 @@ hoverZoomPlugins.push({
           success: function (response) {
             try {
               const j = JSON.parse(response);
-              var keys = hoverZoom.getKeysInJsonObject(j, "profilePicNormal", false);
+              var keys = hoverZoom.getKeysInJsonObject(
+                j,
+                "profilePicNormal",
+                false,
+              );
               if (keys.length != 1) {
-                keys = hoverZoom.getKeysInJsonObject(j, "profilePicLarge", false);
+                keys = hoverZoom.getKeysInJsonObject(
+                  j,
+                  "profilePicLarge",
+                  false,
+                );
                 if (keys.length != 1) return;
               }
               const gallery = keys[0].value.map((k) => [k.image.uri]);
@@ -401,7 +452,8 @@ hoverZoomPlugins.push({
               link.data().hoverZoomGalleryIndex = 0;
               callback(link, pluginName);
               // Image is displayed if the cursor is still over the link
-              if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+              if (link.data().hoverZoomMouseOver)
+                hoverZoom.displayPicFromElement(link);
             } catch {}
           },
           error: function (response) {
@@ -428,7 +480,8 @@ hoverZoomPlugins.push({
         data.hoverZoomSrc = [img.src];
         link.addClass("hoverZoomLink");
         // Image is displayed if the cursor is still over the link
-        if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+        if (link.data().hoverZoomMouseOver)
+          hoverZoom.displayPicFromElement(link);
       })
       .one("mouseleave", function () {
         const link = $(this);
@@ -444,7 +497,8 @@ hoverZoomPlugins.push({
 
         var key,
           src = link.attr("ajaxify");
-        if (!options.showHighRes && src.indexOf("smallsrc=") > -1) key = "smallsrc=";
+        if (!options.showHighRes && src.indexOf("smallsrc=") > -1)
+          key = "smallsrc=";
         else key = "src=";
         src = src.substr(src.indexOf(key) + key.length);
         src = unescape(src.substr(0, src.indexOf("&")));
@@ -469,7 +523,10 @@ hoverZoomPlugins.push({
         }
         // Picasa hosted images
         if (src.indexOf("ggpht.com") > -1 || src.indexOf("blogspot.com") > -1) {
-          src = src.replace(/\/s\d+(-c)?\//, options.showHighRes ? "/s0/" : "/s800/");
+          src = src.replace(
+            /\/s\d+(-c)?\//,
+            options.showHighRes ? "/s0/" : "/s800/",
+          );
         }
         // Youtube images
         if (src.indexOf("ytimg.com") > -1) {
@@ -507,7 +564,10 @@ hoverZoomPlugins.push({
         }
         // Picasa hosted images
         if (src.indexOf("ggpht.com") > -1 || src.indexOf("blogspot.com") > -1) {
-          src = src.replace(/\/s\d+(-c)?\//, options.showHighRes ? "/s0/" : "/s800/");
+          src = src.replace(
+            /\/s\d+(-c)?\//,
+            options.showHighRes ? "/s0/" : "/s800/",
+          );
         }
         // Youtube images
         if (src.indexOf("ytimg.com") > -1) {
@@ -540,7 +600,8 @@ hoverZoomPlugins.push({
         let regexSrcId = /\/(\d+_\d+_\d+)/;
         let matchesSrcId = src.match(regexSrcId);
         let srcId = null;
-        if (matchesSrcId) srcId = matchesSrcId.length > 1 ? matchesSrcId[1] : null;
+        if (matchesSrcId)
+          srcId = matchesSrcId.length > 1 ? matchesSrcId[1] : null;
         if (srcId == null) return;
 
         const fullsizeUrl = searchSrcId_scripts(srcId);
@@ -566,7 +627,8 @@ hoverZoomPlugins.push({
         let regexSrcId = /\/(\d+_\d+_\d+)/;
         let matchesSrcId = src.match(regexSrcId);
         let srcId = null;
-        if (matchesSrcId) srcId = matchesSrcId.length > 1 ? matchesSrcId[1] : null;
+        if (matchesSrcId)
+          srcId = matchesSrcId.length > 1 ? matchesSrcId[1] : null;
         if (srcId == null) return;
 
         const fullsizeUrl = searchSrcId_scripts(srcId);
@@ -589,14 +651,17 @@ hoverZoomPlugins.push({
         let regexProfileid = /\/profile.php\?id=(\d+)/;
         let matchesProfileid = href.match(regexProfileid);
         let profileid = null;
-        if (matchesProfileid) profileid = matchesProfileid.length > 1 ? matchesProfileid[1] : null;
+        if (matchesProfileid)
+          profileid = matchesProfileid.length > 1 ? matchesProfileid[1] : null;
 
         if (profileid == null) return;
 
         // reuse previous result
         if (link.data().hoverZoomFacebookProfileid == profileid) {
           if (link.data().hoverZoomFacebookProfileUrl)
-            link.data().hoverZoomSrc = [link.data().hoverZoomFacebookProfileUrl];
+            link.data().hoverZoomSrc = [
+              link.data().hoverZoomFacebookProfileUrl,
+            ];
           return;
         }
 
@@ -627,13 +692,23 @@ hoverZoomPlugins.push({
               const r = response
                 .split("\r\n")
                 .filter(
-                  (s) => s.indexOf("profilePicLarge") != -1 || s.indexOf("profilePicNormal") != -1
+                  (s) =>
+                    s.indexOf("profilePicLarge") != -1 ||
+                    s.indexOf("profilePicNormal") != -1,
                 )[0];
               if (r == undefined) return;
               const j = JSON.parse(r);
-              var keys = hoverZoom.getKeysInJsonObject(j, "profilePicLarge", false);
+              var keys = hoverZoom.getKeysInJsonObject(
+                j,
+                "profilePicLarge",
+                false,
+              );
               if (keys.length != 1) {
-                keys = hoverZoom.getKeysInJsonObject(j, "profilePicNormal", false);
+                keys = hoverZoom.getKeysInJsonObject(
+                  j,
+                  "profilePicNormal",
+                  false,
+                );
               }
               if (keys.length == 1) {
                 link.data().hoverZoomSrc = [keys[0].value.uri];
@@ -641,7 +716,8 @@ hoverZoomPlugins.push({
                 link.data().hoverZoomFacebookProfileUrl = keys[0].value.uri;
                 callback(link, pluginName);
                 // Image is displayed if the cursor is still over the link
-                if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+                if (link.data().hoverZoomMouseOver)
+                  hoverZoom.displayPicFromElement(link);
               }
             } catch {}
           },
@@ -662,7 +738,7 @@ hoverZoomPlugins.push({
     $("a[href]")
       .filter(function () {
         return !/(\.php\?|\/watch\/|profile_id|\/photos\/|\/videos\/|\/reel\/)/.test(
-          $(this).prop("href")
+          $(this).prop("href"),
         );
       })
       .one("mouseenter", function () {
@@ -674,7 +750,8 @@ hoverZoomPlugins.push({
         let regexUsername = /facebook\.com\/([^/\?]{1,})/;
         let matchesUsername = href.match(regexUsername);
         let username = null;
-        if (matchesUsername) username = matchesUsername.length > 1 ? matchesUsername[1] : null;
+        if (matchesUsername)
+          username = matchesUsername.length > 1 ? matchesUsername[1] : null;
 
         if (username == null) return;
 
@@ -684,7 +761,9 @@ hoverZoomPlugins.push({
         // reuse previous result
         if (link.data().hoverZoomFacebookProfileid == profileid) {
           if (link.data().hoverZoomFacebookProfileUrl)
-            link.data().hoverZoomSrc = [link.data().hoverZoomFacebookProfileUrl];
+            link.data().hoverZoomSrc = [
+              link.data().hoverZoomFacebookProfileUrl,
+            ];
           return;
         }
 
@@ -715,13 +794,23 @@ hoverZoomPlugins.push({
               const r = response
                 .split("\r\n")
                 .filter(
-                  (s) => s.indexOf("profilePicLarge") != -1 || s.indexOf("profilePicNormal") != -1
+                  (s) =>
+                    s.indexOf("profilePicLarge") != -1 ||
+                    s.indexOf("profilePicNormal") != -1,
                 )[0];
               if (r == undefined) return;
               const j = JSON.parse(r);
-              var keys = hoverZoom.getKeysInJsonObject(j, "profilePicLarge", false);
+              var keys = hoverZoom.getKeysInJsonObject(
+                j,
+                "profilePicLarge",
+                false,
+              );
               if (keys.length != 1) {
-                keys = hoverZoom.getKeysInJsonObject(j, "profilePicNormal", false);
+                keys = hoverZoom.getKeysInJsonObject(
+                  j,
+                  "profilePicNormal",
+                  false,
+                );
               }
               if (keys.length == 1) {
                 link.data().hoverZoomSrc = [keys[0].value.uri];
@@ -729,7 +818,8 @@ hoverZoomPlugins.push({
                 link.data().hoverZoomFacebookProfileUrl = keys[0].value.uri;
                 callback(link, pluginName);
                 // Image is displayed if the cursor is still over the link
-                if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+                if (link.data().hoverZoomMouseOver)
+                  hoverZoom.displayPicFromElement(link);
               }
             } catch {}
           },
@@ -761,12 +851,14 @@ hoverZoomPlugins.push({
         let regexProfileid = /facebook\.com\/watch\/(\d+)/;
         let matchesProfileid = href.match(regexProfileid);
         let profileid = null;
-        if (matchesProfileid) profileid = matchesProfileid.length > 1 ? matchesProfileid[1] : null;
+        if (matchesProfileid)
+          profileid = matchesProfileid.length > 1 ? matchesProfileid[1] : null;
         if (profileid == null) {
           regexProfileid = /profile_id=(\d+)/;
           matchesProfileid = href.match(regexProfileid);
           if (matchesProfileid)
-            profileid = matchesProfileid.length > 1 ? matchesProfileid[1] : null;
+            profileid =
+              matchesProfileid.length > 1 ? matchesProfileid[1] : null;
         }
 
         if (profileid == null) return;
@@ -774,7 +866,9 @@ hoverZoomPlugins.push({
         // reuse previous result
         if (link.data().hoverZoomFacebookProfileid == profileid) {
           if (link.data().hoverZoomFacebookProfileUrl)
-            link.data().hoverZoomSrc = [link.data().hoverZoomFacebookProfileUrl];
+            link.data().hoverZoomSrc = [
+              link.data().hoverZoomFacebookProfileUrl,
+            ];
           return;
         }
 
@@ -805,13 +899,23 @@ hoverZoomPlugins.push({
               const r = response
                 .split("\r\n")
                 .filter(
-                  (s) => s.indexOf("profilePicLarge") != -1 || s.indexOf("profilePicNormal") != -1
+                  (s) =>
+                    s.indexOf("profilePicLarge") != -1 ||
+                    s.indexOf("profilePicNormal") != -1,
                 )[0];
               if (r == undefined) return;
               const j = JSON.parse(r);
-              var keys = hoverZoom.getKeysInJsonObject(j, "profilePicLarge", false);
+              var keys = hoverZoom.getKeysInJsonObject(
+                j,
+                "profilePicLarge",
+                false,
+              );
               if (keys.length != 1) {
-                keys = hoverZoom.getKeysInJsonObject(j, "profilePicNormal", false);
+                keys = hoverZoom.getKeysInJsonObject(
+                  j,
+                  "profilePicNormal",
+                  false,
+                );
               }
               if (keys.length == 1) {
                 link.data().hoverZoomSrc = [keys[0].value.uri];
@@ -819,7 +923,8 @@ hoverZoomPlugins.push({
                 link.data().hoverZoomFacebookProfileUrl = keys[0].value.uri;
                 callback(link, pluginName);
                 // Image is displayed if the cursor is still over the link
-                if (link.data().hoverZoomMouseOver1) hoverZoom.displayPicFromElement(link);
+                if (link.data().hoverZoomMouseOver1)
+                  hoverZoom.displayPicFromElement(link);
               }
             } catch {}
           },
@@ -848,7 +953,8 @@ hoverZoomPlugins.push({
         let regexUsername = /facebook\.com\/watch\/([^/\?]{1,})/;
         let matchesUsername = href.match(regexUsername);
         let username = null;
-        if (matchesUsername) username = matchesUsername.length > 1 ? matchesUsername[1] : null;
+        if (matchesUsername)
+          username = matchesUsername.length > 1 ? matchesUsername[1] : null;
 
         if (username == null) return;
 
@@ -876,19 +982,30 @@ hoverZoomPlugins.push({
               const r = response
                 .split("\r\n")
                 .filter(
-                  (s) => s.indexOf("profilePicLarge") != -1 || s.indexOf("profilePicNormal") != -1
+                  (s) =>
+                    s.indexOf("profilePicLarge") != -1 ||
+                    s.indexOf("profilePicNormal") != -1,
                 )[0];
               if (r == undefined) return;
               const j = JSON.parse(r);
-              var keys = hoverZoom.getKeysInJsonObject(j, "profilePicLarge", false);
+              var keys = hoverZoom.getKeysInJsonObject(
+                j,
+                "profilePicLarge",
+                false,
+              );
               if (keys.length != 1) {
-                keys = hoverZoom.getKeysInJsonObject(j, "profilePicNormal", false);
+                keys = hoverZoom.getKeysInJsonObject(
+                  j,
+                  "profilePicNormal",
+                  false,
+                );
               }
               if (keys.length == 1) {
                 link.data().hoverZoomSrc = [keys[0].value.uri];
                 callback(link, pluginName);
                 // Image is displayed if the cursor is still over the link
-                if (link.data().hoverZoomMouseOver2) hoverZoom.displayPicFromElement(link);
+                if (link.data().hoverZoomMouseOver2)
+                  hoverZoom.displayPicFromElement(link);
               }
             } catch {}
           },
@@ -924,11 +1041,13 @@ hoverZoomPlugins.push({
         const href = link.prop("href");
         let regexVideoId = /facebook\.com\/.*\/videos\/(\d+)/;
         let matchesVideoId = href.match(regexVideoId);
-        if (matchesVideoId) videoId = matchesVideoId.length > 1 ? matchesVideoId[1] : null;
+        if (matchesVideoId)
+          videoId = matchesVideoId.length > 1 ? matchesVideoId[1] : null;
         if (videoId == null) {
           regexVideoId = /facebook\.com\/watch\/(?:live\/)?\?.*v=(\d+)/;
           matchesVideoId = href.match(regexVideoId);
-          if (matchesVideoId) videoId = matchesVideoId.length > 1 ? matchesVideoId[1] : null;
+          if (matchesVideoId)
+            videoId = matchesVideoId.length > 1 ? matchesVideoId[1] : null;
         }
 
         if (videoId == null) return;
@@ -968,11 +1087,16 @@ hoverZoomPlugins.push({
                 .split("\r\n")
                 .filter(
                   (s) =>
-                    s.indexOf("playable_url_quality_hd") != -1 || s.indexOf("playable_url") != -1
+                    s.indexOf("playable_url_quality_hd") != -1 ||
+                    s.indexOf("playable_url") != -1,
                 )[0];
               if (r == undefined) return;
               const j = JSON.parse(r);
-              var keys = hoverZoom.getKeysInJsonObject(j, "playable_url_quality_hd", false);
+              var keys = hoverZoom.getKeysInJsonObject(
+                j,
+                "playable_url_quality_hd",
+                false,
+              );
               if (keys.length != 1 || keys[0].value == null) {
                 keys = hoverZoom.getKeysInJsonObject(j, "playable_url", false);
               }
@@ -982,7 +1106,8 @@ hoverZoomPlugins.push({
                 link.data().hoverZoomFacebookVideoUrl = keys[0].value;
                 callback(link, pluginName);
                 // Image is displayed if the cursor is still over the link
-                if (link.data().hoverZoomMouseOver3) hoverZoom.displayPicFromElement(link);
+                if (link.data().hoverZoomMouseOver3)
+                  hoverZoom.displayPicFromElement(link);
               }
             } catch {}
           },
@@ -1012,7 +1137,8 @@ hoverZoomPlugins.push({
         const href = link.prop("href");
         let regexReelId = /facebook\.com\/reel\/(\d+)/;
         let matchesReelId = href.match(regexReelId);
-        if (matchesReelId) reelId = matchesReelId.length > 1 ? matchesReelId[1] : null;
+        if (matchesReelId)
+          reelId = matchesReelId.length > 1 ? matchesReelId[1] : null;
 
         if (reelId == null) return;
 
@@ -1052,13 +1178,21 @@ hoverZoomPlugins.push({
                 .filter(
                   (s) =>
                     s.indexOf("browser_native_hd_url") != -1 ||
-                    s.indexOf("browser_native_sd_url") != -1
+                    s.indexOf("browser_native_sd_url") != -1,
                 )[0];
               if (r == undefined) return;
               const j = JSON.parse(r);
-              var keys = hoverZoom.getKeysInJsonObject(j, "browser_native_hd_url", false);
+              var keys = hoverZoom.getKeysInJsonObject(
+                j,
+                "browser_native_hd_url",
+                false,
+              );
               if (keys.length == 0 || keys[0].value == null) {
-                keys = hoverZoom.getKeysInJsonObject(j, "browser_native_sd_url", false);
+                keys = hoverZoom.getKeysInJsonObject(
+                  j,
+                  "browser_native_sd_url",
+                  false,
+                );
               }
               if (keys.length) {
                 link.data().hoverZoomSrc = [keys[0].value];
@@ -1066,7 +1200,8 @@ hoverZoomPlugins.push({
                 link.data().hoverZoomFacebookReelUrl = keys[0].value;
                 callback(link, pluginName);
                 // Image is displayed if the cursor is still over the link
-                if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+                if (link.data().hoverZoomMouseOver)
+                  hoverZoom.displayPicFromElement(link);
               }
             } catch {}
           },
@@ -1111,7 +1246,7 @@ hoverZoomPlugins.push({
           // store uri
           sessionStorage.setItem(currentId, uri);
           callback(currentLink);
-        }
+        },
       );
     }
 
@@ -1121,7 +1256,8 @@ hoverZoomPlugins.push({
       let regexGraphId = /\/graph\.facebook\.com\/.*\/(\d+)\//; //sample: https://graph.facebook.com/v2.9/1125844704094568/picture?type=square&height=64&width=64
       let matchGraphId = url.match(regexGraphId);
       let graphId = null;
-      if (matchGraphId) graphId = matchGraphId.length > 1 ? matchGraphId[1] : null;
+      if (matchGraphId)
+        graphId = matchGraphId.length > 1 ? matchGraphId[1] : null;
 
       let storedUrl = null;
       // check sessionStorage in case uri was already found
@@ -1130,7 +1266,10 @@ hoverZoomPlugins.push({
       }
 
       if (storedUrl == null) {
-        let requestUrl = "https://graph.facebook.com/" + graphId + "/picture?type=large&width=9999";
+        let requestUrl =
+          "https://graph.facebook.com/" +
+          graphId +
+          "/picture?type=large&width=9999";
         loadImg(requestUrl, link, graphId);
       } else {
         let data = link.data();

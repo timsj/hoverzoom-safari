@@ -112,9 +112,16 @@ const factorySettings = {
 
 async function migrateOptions() {
   const result = await optionsStorageGet("extensionEnabled");
-  if (result !== undefined && result !== null && result.extensionEnabled !== undefined) return;
+  if (
+    result !== undefined &&
+    result !== null &&
+    result.extensionEnabled !== undefined
+  )
+    return;
   const options =
-    localStorage && localStorage.options ? JSON.parse(localStorage.options) : factorySettings;
+    localStorage && localStorage.options
+      ? JSON.parse(localStorage.options)
+      : factorySettings;
   await optionsStorageSet(options);
 }
 
@@ -132,17 +139,23 @@ function sendOptions(options) {
   // Send options to all tabs - using browser.* API for Safari
   browser.windows.getAll(null, function (windows) {
     for (var i = 0; i < windows.length; i++) {
-      browser.tabs.query({ active: true, windowId: windows[i].id }, function (tabs) {
-        for (var j = 0; j < tabs.length; j++) {
-          const tab = tabs[j];
-          if (tab.url && (tab.url.startsWith("http://") || tab.url.startsWith("https://"))) {
-            browser.tabs.sendMessage(tab.id, request, function (response) {
-              // Ignore errors that occur when the receiving end doesn't exist
-              let lastError = browser.runtime.lastError;
-            });
+      browser.tabs.query(
+        { active: true, windowId: windows[i].id },
+        function (tabs) {
+          for (var j = 0; j < tabs.length; j++) {
+            const tab = tabs[j];
+            if (
+              tab.url &&
+              (tab.url.startsWith("http://") || tab.url.startsWith("https://"))
+            ) {
+              browser.tabs.sendMessage(tab.id, request, function (response) {
+                // Ignore errors that occur when the receiving end doesn't exist
+                let lastError = browser.runtime.lastError;
+              });
+            }
           }
-        }
-      });
+        },
+      );
     }
   });
 
@@ -169,11 +182,17 @@ function i18n() {
   });
   $("[data-i18n-placeholder]").each(function (index, element) {
     var elem = $(element);
-    elem.attr("placeholder", browser.i18n.getMessage(elem.attr("data-i18n-placeholder")));
+    elem.attr(
+      "placeholder",
+      browser.i18n.getMessage(elem.attr("data-i18n-placeholder")),
+    );
   });
   $("[data-i18n-tooltip]").each(function (index, element) {
     var elem = $(element);
-    elem.attr("data-tooltip", browser.i18n.getMessage(elem.attr("data-i18n-tooltip")));
+    elem.attr(
+      "data-tooltip",
+      browser.i18n.getMessage(elem.attr("data-i18n-tooltip")),
+    );
   });
 }
 

@@ -17,27 +17,43 @@ hoverZoomPlugins.push({
     const tok_INNERTUBE_API_KEY = "INNERTUBE_API_KEY";
 
     let innerHtml = document.documentElement.innerHTML;
-    let pos_INNERTUBE_CLIENT_VERSION = innerHtml.indexOf(tok_INNERTUBE_CLIENT_VERSION);
+    let pos_INNERTUBE_CLIENT_VERSION = innerHtml.indexOf(
+      tok_INNERTUBE_CLIENT_VERSION,
+    );
     if (pos_INNERTUBE_CLIENT_VERSION > -1) {
-      let firstquoteIndex = pos_INNERTUBE_CLIENT_VERSION + tok_INNERTUBE_CLIENT_VERSION.length + 2;
+      let firstquoteIndex =
+        pos_INNERTUBE_CLIENT_VERSION + tok_INNERTUBE_CLIENT_VERSION.length + 2;
       let lastquoteIndex = innerHtml.indexOf('"', firstquoteIndex + 1);
-      INNERTUBE_CLIENT_VERSION = innerHtml.substring(firstquoteIndex + 1, lastquoteIndex);
+      INNERTUBE_CLIENT_VERSION = innerHtml.substring(
+        firstquoteIndex + 1,
+        lastquoteIndex,
+      );
     }
-    let pos_INNERTUBE_CLIENT_NAME = innerHtml.indexOf(tok_INNERTUBE_CLIENT_NAME);
+    let pos_INNERTUBE_CLIENT_NAME = innerHtml.indexOf(
+      tok_INNERTUBE_CLIENT_NAME,
+    );
     if (pos_INNERTUBE_CLIENT_NAME > -1) {
-      let firstquoteIndex = pos_INNERTUBE_CLIENT_NAME + tok_INNERTUBE_CLIENT_NAME.length + 2;
+      let firstquoteIndex =
+        pos_INNERTUBE_CLIENT_NAME + tok_INNERTUBE_CLIENT_NAME.length + 2;
       let lastquoteIndex = innerHtml.indexOf('"', firstquoteIndex + 1);
-      INNERTUBE_CLIENT_NAME = innerHtml.substring(firstquoteIndex + 1, lastquoteIndex);
+      INNERTUBE_CLIENT_NAME = innerHtml.substring(
+        firstquoteIndex + 1,
+        lastquoteIndex,
+      );
     }
     let pos_INNERTUBE_API_KEY = innerHtml.indexOf(tok_INNERTUBE_API_KEY);
     if (pos_INNERTUBE_API_KEY > -1) {
-      let firstquoteIndex = pos_INNERTUBE_API_KEY + tok_INNERTUBE_API_KEY.length + 2;
+      let firstquoteIndex =
+        pos_INNERTUBE_API_KEY + tok_INNERTUBE_API_KEY.length + 2;
       let lastquoteIndex = innerHtml.indexOf('"', firstquoteIndex + 1);
-      INNERTUBE_API_KEY = innerHtml.substring(firstquoteIndex + 1, lastquoteIndex);
+      INNERTUBE_API_KEY = innerHtml.substring(
+        firstquoteIndex + 1,
+        lastquoteIndex,
+      );
     }
 
     $(
-      'a[href*="/watch?v="], a[href*="/shorts/"], a[href*="youtu.be"], div[ourl*="/watch?v="], div[ourl*="/shorts/"], div[ourl*="youtu.be"]'
+      'a[href*="/watch?v="], a[href*="/shorts/"], a[href*="youtu.be"], div[ourl*="/watch?v="], div[ourl*="/shorts/"], div[ourl*="youtu.be"]',
     ).on("mouseover", function () {
       let link = $(this),
         href;
@@ -66,7 +82,8 @@ hoverZoomPlugins.push({
         const parts = start.split("m");
         if (parts.length === 2) {
           const parts2 = start.split("h");
-          if (parts2.length === 2) parts[0] = parseInt(parts2[0]) * 60 + parseInt(parts2[1]);
+          if (parts2.length === 2)
+            parts[0] = parseInt(parts2[0]) * 60 + parseInt(parts2[1]);
           start = parseInt(parts[0]) * 60 + parseInt(parts[1] || 0);
         }
       }
@@ -74,7 +91,9 @@ hoverZoomPlugins.push({
       // reuse previous result
       if (link.data().hoverZoomYouTubeApiVideoId === videoId) {
         if (link.data().hoverZoomYouTubeApiAudioUrl)
-          link.data().hoverZoomAudioSrc = [link.data().hoverZoomYouTubeApiAudioUrl];
+          link.data().hoverZoomAudioSrc = [
+            link.data().hoverZoomYouTubeApiAudioUrl,
+          ];
         if (link.data().hoverZoomYouTubeApiVideoUrl)
           link.data().hoverZoomSrc = [link.data().hoverZoomYouTubeApiVideoUrl];
         return;
@@ -113,7 +132,9 @@ hoverZoomPlugins.push({
               .filter((f) => f.width <= 1600)
               .map((f) => (f.width ? f.width : -1));
             let widthMax = Math.max(...widths);
-            let bestVideo = j["streamingData"]["adaptiveFormats"].find((f) => f.width === widthMax);
+            let bestVideo = j["streamingData"]["adaptiveFormats"].find(
+              (f) => f.width === widthMax,
+            );
             cLog(`${videoId} bestVideo: ${widthMax} ${bestVideo.url}`);
             let urlVideo = bestVideo.url + (start ? "#t=" + start : "");
 
@@ -138,7 +159,7 @@ hoverZoomPlugins.push({
           } catch (e) {
             cLog(e.message);
           }
-        }
+        },
       );
     });
 
@@ -146,7 +167,7 @@ hoverZoomPlugins.push({
       res,
       'img[src*="ytimg.com/vi/"], img[src*="ytimg.com/vi_webp/"]',
       /\/([1-9]|default|hqdefault|mqdefault)\.(jpg|webp)/,
-      "/0.$2"
+      "/0.$2",
     );
 
     $('a img[data-thumb*="ytimg.com/vi/"]').each(function () {
@@ -154,7 +175,7 @@ hoverZoomPlugins.push({
       img.data().hoverZoomSrc = [
         this.getAttribute("data-thumb").replace(
           /\/([1-9]|default|hqdefault|mqdefault)\.jpg/,
-          "/0.jpg"
+          "/0.jpg",
         ),
       ];
       res.push(img);

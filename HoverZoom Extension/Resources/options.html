@@ -52,12 +52,24 @@
 
           <div class="setting-row">
             <label for="displayDelay">Hover delay (ms):</label>
-            <input type="number" id="displayDelay" min="0" max="2000" step="50" />
+            <input
+              type="number"
+              id="displayDelay"
+              min="0"
+              max="2000"
+              step="50"
+            />
           </div>
 
           <div class="setting-row">
             <label for="fadeDuration">Fade duration (ms):</label>
-            <input type="number" id="fadeDuration" min="0" max="1000" step="50" />
+            <input
+              type="number"
+              id="fadeDuration"
+              min="0"
+              max="1000"
+              step="50"
+            />
           </div>
 
           <div class="setting-row">
@@ -67,7 +79,13 @@
 
           <div class="setting-row">
             <label for="picturesOpacity">Image opacity:</label>
-            <input type="range" id="picturesOpacity" min="0.1" max="1" step="0.1" />
+            <input
+              type="range"
+              id="picturesOpacity"
+              min="0.1"
+              max="1"
+              step="0.1"
+            />
             <span id="opacityValue">1</span>
           </div>
 
@@ -97,7 +115,13 @@
 
           <div class="setting-row">
             <label for="frameThickness">Frame thickness (px):</label>
-            <input type="number" id="frameThickness" min="0" max="20" step="1" />
+            <input
+              type="number"
+              id="frameThickness"
+              min="0"
+              max="20"
+              step="1"
+            />
           </div>
 
           <div class="setting-row">
@@ -111,7 +135,13 @@
 
           <div class="setting-row">
             <label for="captionOpacity">Caption opacity:</label>
-            <input type="range" id="captionOpacity" min="0.1" max="1" step="0.1" />
+            <input
+              type="range"
+              id="captionOpacity"
+              min="0.1"
+              max="1"
+              step="0.1"
+            />
             <span id="captionOpacityValue">1</span>
           </div>
 
@@ -126,32 +156,64 @@
 
           <div class="setting-row">
             <label for="detailsOpacity">Details opacity:</label>
-            <input type="range" id="detailsOpacity" min="0.1" max="1" step="0.1" />
+            <input
+              type="range"
+              id="detailsOpacity"
+              min="0.1"
+              max="1"
+              step="0.1"
+            />
             <span id="detailsOpacityValue">1</span>
           </div>
 
           <div class="setting-row details-checkboxes">
             <label>Show in details:</label>
             <div class="checkbox-group">
-              <label><input type="checkbox" id="showDetailFilename" /><span>Filename</span></label>
-              <label><input type="checkbox" id="showDetailHost" /><span>Host</span></label>
               <label
-                ><input type="checkbox" id="showDetailDimensions" /><span>Dimensions</span></label
-              >
-              <label><input type="checkbox" id="showDetailScale" /><span>Scale</span></label>
-              <label><input type="checkbox" id="showDetailRatio" /><span>Ratio</span></label>
-              <label
-                ><input type="checkbox" id="showDetailExtension" /><span>Extension</span></label
+                ><input type="checkbox" id="showDetailFilename" /><span
+                  >Filename</span
+                ></label
               >
               <label
-                ><input type="checkbox" id="showDetailContentLength" /><span>File size</span></label
+                ><input type="checkbox" id="showDetailHost" /><span
+                  >Host</span
+                ></label
+              >
+              <label
+                ><input type="checkbox" id="showDetailDimensions" /><span
+                  >Dimensions</span
+                ></label
+              >
+              <label
+                ><input type="checkbox" id="showDetailScale" /><span
+                  >Scale</span
+                ></label
+              >
+              <label
+                ><input type="checkbox" id="showDetailRatio" /><span
+                  >Ratio</span
+                ></label
+              >
+              <label
+                ><input type="checkbox" id="showDetailExtension" /><span
+                  >Extension</span
+                ></label
+              >
+              <label
+                ><input type="checkbox" id="showDetailContentLength" /><span
+                  >File size</span
+                ></label
               >
               <label
                 ><input type="checkbox" id="showDetailLastModified" /><span
                   >Last modified</span
                 ></label
               >
-              <label><input type="checkbox" id="showDetailDuration" /><span>Duration</span></label>
+              <label
+                ><input type="checkbox" id="showDetailDuration" /><span
+                  >Duration</span
+                ></label
+              >
             </div>
           </div>
 
@@ -254,7 +316,9 @@
         <button id="resetBtn">Reset to Defaults</button>
         <span id="statusMsg"></span>
         <p class="version">
-          <a href="https://github.com/timsj/hoverzoom-safari/commit/__COMMIT_HASH__" target="_blank"
+          <a
+            href="https://github.com/timsj/hoverzoom-safari/commit/__COMMIT_HASH__"
+            target="_blank"
             >v1.0 (__COMMIT_HASH__)</a
           >
         </p>

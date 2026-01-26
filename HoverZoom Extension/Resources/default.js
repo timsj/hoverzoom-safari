@@ -7,17 +7,20 @@ hoverZoomPlugins.push({
   version: "0.8",
   prepareImgLinks: function (callback) {
     const res = [];
-    const reVideos = /\/[^:]+\.(?:3gpp|m4v|mkv|mp4|ogv|webm)(?:[\?#].*)?(?:\/)?$/i;
+    const reVideos =
+      /\/[^:]+\.(?:3gpp|m4v|mkv|mp4|ogv|webm)(?:[\?#].*)?(?:\/)?$/i;
     const reImages =
       /\/[^:]+\.(?:avif|bmp|gifv?|ico|jfif|jpe|jpe?g|png|svg|webp|xbm)(?:[\?#].*)?(?:\/)?$/i;
     const rePlaylists = /\/[^:]+\.(?:m3u8)(?:[\?#].*)?(?:\/)?$/i;
-    const reAudios = /\/[^:]+\.(?:flac|m4a|mp3|oga|ogg|opus|wav)(?:[\?#].*)?(?:\/)?$/i;
+    const reAudios =
+      /\/[^:]+\.(?:flac|m4a|mp3|oga|ogg|opus|wav)(?:[\?#].*)?(?:\/)?$/i;
 
     // Handle <a href> elements pointing to image files
     $("a[href]")
       .filter(function () {
         if (typeof this.href != "string") return false;
-        if (this.href.substr(0, 10).toLowerCase() === "data:image") return false;
+        if (this.href.substr(0, 10).toLowerCase() === "data:image")
+          return false;
         if (this.href.match(reImages)) return true;
         if (this.href.match(reVideos)) return true;
         if (this.href.match(rePlaylists)) return true;
@@ -31,7 +34,8 @@ hoverZoomPlugins.push({
           const src = this.href;
           if (
             !options.zoomVideos ||
-            ((src.indexOf("imgur.com") === -1 || src.indexOf("slimgur.com") !== -1) &&
+            ((src.indexOf("imgur.com") === -1 ||
+              src.indexOf("slimgur.com") !== -1) &&
               src.indexOf("gfycat.com") === -1)
           ) {
             data.hoverZoomSrc = [src];
@@ -77,9 +81,14 @@ hoverZoomPlugins.push({
         if (!fullSrc && this.src.indexOf("upload.wikimedia.org") !== -1) {
           // Thumbnail pattern: /thumb/a/ab/File.jpg/220px-File.jpg
           // Full size pattern: /a/ab/File.jpg
-          const thumbMatch = this.src.match(/\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-/i);
+          const thumbMatch = this.src.match(
+            /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-/i,
+          );
           if (thumbMatch) {
-            fullSrc = this.src.replace(/\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-.+$/i, "$1");
+            fullSrc = this.src.replace(
+              /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-.+$/i,
+              "$1",
+            );
           }
         }
 
@@ -110,7 +119,11 @@ hoverZoomPlugins.push({
         }
 
         // Make sure it's a full URL
-        if (fullSrc && !fullSrc.startsWith("http") && !fullSrc.startsWith("//")) {
+        if (
+          fullSrc &&
+          !fullSrc.startsWith("http") &&
+          !fullSrc.startsWith("//")
+        ) {
           if (fullSrc.startsWith("/")) {
             fullSrc = window.location.origin + fullSrc;
           } else {
@@ -159,9 +172,14 @@ hoverZoomPlugins.push({
           // Get full size from the thumbnail in the link
           const imgSrc = this.src;
           if (imgSrc.indexOf("upload.wikimedia.org") !== -1) {
-            const thumbMatch = imgSrc.match(/\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-/i);
+            const thumbMatch = imgSrc.match(
+              /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-/i,
+            );
             if (thumbMatch) {
-              fullSrc = imgSrc.replace(/\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-.+$/i, "$1");
+              fullSrc = imgSrc.replace(
+                /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-.+$/i,
+                "$1",
+              );
             }
           }
         }

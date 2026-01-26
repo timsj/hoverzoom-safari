@@ -17,7 +17,7 @@ hoverZoomPlugins.push({
       res,
       'img[src*=".googleusercontent.com/"], img[src*=".ggpht.com/"], img[src*=".google.com/"]',
       /(\/|=)(w\d{2,}-h\d{2,}|[hws]\d{2,})(-[npckorw]+)*(\/|$)/,
-      options.showHighRes ? "$1s0$4" : "$1s800$4"
+      options.showHighRes ? "$1s0$4" : "$1s800$4",
     );
 
     hoverZoom.urlReplace(res, 'a[href*="imgurl="]', /.*imgurl=([^&]+).*/, "$1");
@@ -26,7 +26,7 @@ hoverZoomPlugins.push({
       res,
       'div[style*="background-image"]:not([style*="?"])',
       /(.*=)(.*)/,
-      "$1s0"
+      "$1s0",
     );
 
     function cleanUrl(url) {
@@ -57,14 +57,19 @@ hoverZoomPlugins.push({
       if (initData == null) {
         if (document.scripts == undefined) return url;
         let scripts = Array.from(document.scripts);
-        let goodScripts = scripts.filter((script) => script.text.indexOf(tbnid) != -1);
+        let goodScripts = scripts.filter(
+          (script) => script.text.indexOf(tbnid) != -1,
+        );
         if (goodScripts.length != 1) return url;
         initData = goodScripts.pop().text;
       }
       let tbnidq = '"' + tbnid + '",';
       if (initData.indexOf(tbnidq) != -1) {
         let firstquoteIndex =
-          initData.indexOf("[", initData.indexOf("[", initData.indexOf(tbnidq)) + 1) + 1;
+          initData.indexOf(
+            "[",
+            initData.indexOf("[", initData.indexOf(tbnidq)) + 1,
+          ) + 1;
         let lastquoteIndex = initData.indexOf('"', firstquoteIndex + 1);
         url = initData.substring(firstquoteIndex + 1, lastquoteIndex);
       }
@@ -80,7 +85,10 @@ hoverZoomPlugins.push({
       let tbnidq = '"' + tbnid + '",';
       if (data2parse.indexOf(tbnidq) != -1) {
         let firstquoteIndex =
-          data2parse.indexOf("[", data2parse.indexOf("[", data2parse.indexOf(tbnidq)) + 1) + 1;
+          data2parse.indexOf(
+            "[",
+            data2parse.indexOf("[", data2parse.indexOf(tbnidq)) + 1,
+          ) + 1;
         let lastquoteIndex = data2parse.indexOf('"', firstquoteIndex + 1);
         url = data2parse.substring(firstquoteIndex + 1, lastquoteIndex);
       }
@@ -149,7 +157,8 @@ hoverZoomPlugins.push({
         imgUrlIndex = href.indexOf("imgurl=");
       href = href.substring(imgUrlIndex + 7, href.indexOf("&", imgUrlIndex));
       try {
-        while (decodeURIComponent(href) != href) href = decodeURIComponent(href);
+        while (decodeURIComponent(href) != href)
+          href = decodeURIComponent(href);
       } catch (e) {}
       link.classList.remove("hoverZoomLink");
       img.data().hoverZoomSrc = [href];

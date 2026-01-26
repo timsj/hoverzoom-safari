@@ -9,10 +9,16 @@ hoverZoomPlugins.push({
       res,
       'img[src*="_mini"]:not([src*="default_profile_"]), img[src*="_normal"]:not([src*="default_profile_"]), img[src*="_bigger"]:not([src*="default_profile_"])',
       /_(mini|normal|bigger)/,
-      ""
+      "",
     );
 
-    hoverZoom.urlReplace(res, 'img[src*="/profile_images/"]', /_(mini|normal|bigger)/, "", "a");
+    hoverZoom.urlReplace(
+      res,
+      'img[src*="/profile_images/"]',
+      /_(mini|normal|bigger)/,
+      "",
+      "a",
+    );
 
     hoverZoom.urlReplace(res, 'img[src*=":thumb"]', ":thumb", ":large");
 
@@ -20,7 +26,9 @@ hoverZoomPlugins.push({
 
     hoverZoom.urlReplace(res, "img[src]", /&name=.*/, "&name=large");
 
-    $("[data-image-url], [data-expanded-url], [data-full-url], [data-url]").each(function () {
+    $(
+      "[data-image-url], [data-expanded-url], [data-full-url], [data-url]",
+    ).each(function () {
       var link = $(this),
         url =
           this.getAttribute("data-image-url") ||
@@ -28,13 +36,20 @@ hoverZoomPlugins.push({
           this.getAttribute("data-full-url") ||
           this.getAttribute("data-url");
       if (
-        url.match(/\/[^:]+\.(?:jpe?g|gifv?|png|svg|webp|bmp|ico|xbm)(?:[\?#:].*)?$/i) ||
+        url.match(
+          /\/[^:]+\.(?:jpe?g|gifv?|png|svg|webp|bmp|ico|xbm)(?:[\?#:].*)?$/i,
+        ) ||
         url.match(/twimg\.com/)
       ) {
         //replace .jpg by .jpg:large
-        url = url.replace(/(.jpe?g)$/, "$1:large").replace(/(.jpe?g)([^:])/, "$1:large$2");
+        url = url
+          .replace(/(.jpe?g)$/, "$1:large")
+          .replace(/(.jpe?g)([^:])/, "$1:large$2");
         link.data().hoverZoomSrc = [
-          url.replace(":thumb", ":large").replace(":small", ":large").replace(":medium", ":large"),
+          url
+            .replace(":thumb", ":large")
+            .replace(":small", ":large")
+            .replace(":medium", ":large"),
         ];
         res.push(link);
         link.addClass("hoverZoomLink");
@@ -46,7 +61,9 @@ hoverZoomPlugins.push({
         var i,
           src,
           srcs = [],
-          multiPhoto = doc.querySelectorAll('.multi-photo img[src*="twimg.com/media/"]');
+          multiPhoto = doc.querySelectorAll(
+            '.multi-photo img[src*="twimg.com/media/"]',
+          );
         if (multiPhoto.length > 0) {
           for (i = 0; i < multiPhoto.length; i++) {
             srcs.push([
@@ -58,7 +75,9 @@ hoverZoomPlugins.push({
         } else {
           var img = doc.querySelector('img[src*="twimg.com/media/"]');
           if (img) {
-            srcs.push(img.src.indexOf(":large") == -1 ? img.src + ":large" : img.src);
+            srcs.push(
+              img.src.indexOf(":large") == -1 ? img.src + ":large" : img.src,
+            );
           } else {
             img = doc.querySelector('video[src*="twimg.com/tweet_video/"]');
             if (img) {

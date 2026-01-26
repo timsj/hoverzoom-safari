@@ -27,7 +27,8 @@ hoverZoomPlugins.push({
     if (m) {
       userName = m[1];
       if (!["instagram|explore|reels|stories|p"].includes(userName)) {
-        var instagramUsersData = sessionStorage.getItem("instagramUsersData") || "{}";
+        var instagramUsersData =
+          sessionStorage.getItem("instagramUsersData") || "{}";
         try {
           instagramUsersData = JSON.parse(instagramUsersData);
           if (instagramUsersData[userName]) {
@@ -40,7 +41,9 @@ hoverZoomPlugins.push({
           browser.runtime.sendMessage(
             {
               action: "ajaxGet",
-              url: "https://www.instagram.com/api/v1/users/web_profile_info/?username=" + userName,
+              url:
+                "https://www.instagram.com/api/v1/users/web_profile_info/?username=" +
+                userName,
               headers: [{ header: "X-IG-App-ID", value: "936619743392459" }],
             },
             function (response) {
@@ -51,23 +54,31 @@ hoverZoomPlugins.push({
                 // store user data
                 instagramUsersData[userName] = o;
                 try {
-                  sessionStorage.setItem("instagramUsersData", JSON.stringify(instagramUsersData));
+                  sessionStorage.setItem(
+                    "instagramUsersData",
+                    JSON.stringify(instagramUsersData),
+                  );
                 } catch {
                   // reset sessionStorage
                   let instagramUserData = instagramUsersData[userName];
                   instagramUsersData = {};
                   instagramUsersData[userName] = instagramUserData;
-                  sessionStorage.setItem("instagramUsersData", JSON.stringify(instagramUsersData));
+                  sessionStorage.setItem(
+                    "instagramUsersData",
+                    JSON.stringify(instagramUsersData),
+                  );
                 }
                 getUserReelsHighlights();
               } catch {}
-            }
+            },
           );
         } else {
           var instagramUsersReelsHighlights =
             sessionStorage.getItem("instagramUsersReelsHighlights") || "{}";
           try {
-            instagramUsersReelsHighlights = JSON.parse(instagramUsersReelsHighlights);
+            instagramUsersReelsHighlights = JSON.parse(
+              instagramUsersReelsHighlights,
+            );
             if (!instagramUsersReelsHighlights[userId]) {
               getUserReelsHighlights();
             }
@@ -91,26 +102,30 @@ hoverZoomPlugins.push({
           var instagramUsersReelsHighlights =
             sessionStorage.getItem("instagramUsersReelsHighlights") || "{}";
           try {
-            instagramUsersReelsHighlights = JSON.parse(instagramUsersReelsHighlights);
+            instagramUsersReelsHighlights = JSON.parse(
+              instagramUsersReelsHighlights,
+            );
             // store reels data
             instagramUsersReelsHighlights[userId] = JSON.parse(response);
             try {
               sessionStorage.setItem(
                 "instagramUsersReelsHighlights",
-                JSON.stringify(instagramUsersReelsHighlights)
+                JSON.stringify(instagramUsersReelsHighlights),
               );
             } catch {
               // reset sessionStorage
-              let instagramUserReelsHighlights = instagramUsersReelsHighlights[userId];
+              let instagramUserReelsHighlights =
+                instagramUsersReelsHighlights[userId];
               instagramUsersReelsHighlights = {};
-              instagramUsersReelsHighlights[userId] = instagramUserReelsHighlights;
+              instagramUsersReelsHighlights[userId] =
+                instagramUserReelsHighlights;
               sessionStorage.setItem(
                 "instagramUsersReelsHighlights",
-                JSON.stringify(instagramUsersReelsHighlights)
+                JSON.stringify(instagramUsersReelsHighlights),
               );
             }
           } catch {}
-        }
+        },
       );
     }
 
@@ -131,9 +146,11 @@ hoverZoomPlugins.push({
         // resuse previous result
         if (link.data().hoverZoomInstagramUserId == userId) {
           if (link.data().hoverZoomInstagramGallerySrc) {
-            link.data().hoverZoomGallerySrc = link.data().hoverZoomInstagramGallerySrc;
+            link.data().hoverZoomGallerySrc =
+              link.data().hoverZoomInstagramGallerySrc;
             if (link.data().hoverZoomInstagramGalleryCaption) {
-              link.data().hoverZoomGalleryCaption = link.data().hoverZoomInstagramGalleryCaption;
+              link.data().hoverZoomGalleryCaption =
+                link.data().hoverZoomInstagramGalleryCaption;
             }
           }
           return;
@@ -146,7 +163,9 @@ hoverZoomPlugins.push({
         browser.runtime.sendMessage(
           {
             action: "ajaxGet",
-            url: "https://www.instagram.com/api/v1/feed/reels_media/?reel_ids=" + userId,
+            url:
+              "https://www.instagram.com/api/v1/feed/reels_media/?reel_ids=" +
+              userId,
             headers: [{ header: "X-IG-App-ID", value: "936619743392459" }],
           },
           function (response) {
@@ -158,7 +177,9 @@ hoverZoomPlugins.push({
               const reels = o.reels_media[0].items;
               reels.map((r) => {
                 gallery.push([
-                  r.video_versions ? r.video_versions[0].url : r.image_versions2.candidates[0].url,
+                  r.video_versions
+                    ? r.video_versions[0].url
+                    : r.image_versions2.candidates[0].url,
                 ]);
                 captions.push(r.caption ?? userFullname);
               });
@@ -168,9 +189,10 @@ hoverZoomPlugins.push({
               link.data().hoverZoomInstagramGalleryCaption = captions;
               callback(link, pluginName);
               // Media is displayed iff the cursor is still over the media
-              if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+              if (link.data().hoverZoomMouseOver)
+                hoverZoom.displayPicFromElement(link);
             } catch {}
-          }
+          },
         );
       })
       .on("mouseleave", function () {
@@ -192,9 +214,11 @@ hoverZoomPlugins.push({
         // resuse previous result
         if (link.data().hoverZoomInstagramUserId == userId) {
           if (link.data().hoverZoomInstagramGallerySrc) {
-            link.data().hoverZoomGallerySrc = link.data().hoverZoomInstagramGallerySrc;
+            link.data().hoverZoomGallerySrc =
+              link.data().hoverZoomInstagramGallerySrc;
             if (link.data().hoverZoomInstagramGalleryCaption) {
-              link.data().hoverZoomGalleryCaption = link.data().hoverZoomInstagramGalleryCaption;
+              link.data().hoverZoomGalleryCaption =
+                link.data().hoverZoomInstagramGalleryCaption;
             }
           }
           return;
@@ -210,7 +234,9 @@ hoverZoomPlugins.push({
           sessionStorage.getItem("instagramUsersReelsHighlights") || "{}";
         var reels;
         try {
-          instagramUsersReelsHighlights = JSON.parse(instagramUsersReelsHighlights);
+          instagramUsersReelsHighlights = JSON.parse(
+            instagramUsersReelsHighlights,
+          );
           reels = instagramUsersReelsHighlights[userId];
         } catch {
           return;
@@ -219,7 +245,13 @@ hoverZoomPlugins.push({
         // find reel_ids associated to img
         var reel_ids = undefined;
         try {
-          const values = hoverZoom.getValuesInJsonObject(reels, imgSrc, false, true, true); // look for a partial match & stop after 1st match
+          const values = hoverZoom.getValuesInJsonObject(
+            reels,
+            imgSrc,
+            false,
+            true,
+            true,
+          ); // look for a partial match & stop after 1st match
           if (values.length == 0) {
             return;
           }
@@ -228,8 +260,10 @@ hoverZoomPlugins.push({
             reels,
             values[0].path.substring(
               0,
-              values[0].path.substring(0, values[0].path.lastIndexOf("[")).lastIndexOf("[")
-            )
+              values[0].path
+                .substring(0, values[0].path.lastIndexOf("["))
+                .lastIndexOf("["),
+            ),
           );
           reel_ids = o.id;
         } catch {}
@@ -240,7 +274,8 @@ hoverZoomPlugins.push({
           {
             action: "ajaxGet",
             url:
-              "https://www.instagram.com/api/v1/feed/reels_media/?reel_ids=highlight:" + reel_ids,
+              "https://www.instagram.com/api/v1/feed/reels_media/?reel_ids=highlight:" +
+              reel_ids,
             headers: [{ header: "X-IG-App-ID", value: "936619743392459" }],
           },
           function (response) {
@@ -252,7 +287,9 @@ hoverZoomPlugins.push({
               const reels = o.reels_media[0].items;
               reels.map((r) => {
                 gallery.push([
-                  r.video_versions ? r.video_versions[0].url : r.image_versions2.candidates[0].url,
+                  r.video_versions
+                    ? r.video_versions[0].url
+                    : r.image_versions2.candidates[0].url,
                 ]);
                 captions.push(r.caption ?? userFullname);
               });
@@ -262,9 +299,10 @@ hoverZoomPlugins.push({
               link.data().hoverZoomInstagramGalleryCaption = captions;
               callback(link, pluginName);
               // Media is displayed iff the cursor is still over the media
-              if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+              if (link.data().hoverZoomMouseOver)
+                hoverZoom.displayPicFromElement(link);
             } catch {}
-          }
+          },
         );
       })
       .on("mouseleave", function () {
@@ -294,12 +332,16 @@ hoverZoomPlugins.push({
         link.data().hoverZoomSrc = [];
 
         // lookup sessionStorage
-        var instagramUsersData = sessionStorage.getItem("instagramUsersData") || "{}";
+        var instagramUsersData =
+          sessionStorage.getItem("instagramUsersData") || "{}";
         try {
           instagramUsersData = JSON.parse(instagramUsersData);
           if (instagramUsersData[username]) {
-            link.data().hoverZoomSrc = [instagramUsersData[username].data.user.profile_pic_url_hd];
-            link.data().hoverZoomCaption = instagramUsersData[username].data.user.full_name;
+            link.data().hoverZoomSrc = [
+              instagramUsersData[username].data.user.profile_pic_url_hd,
+            ];
+            link.data().hoverZoomCaption =
+              instagramUsersData[username].data.user.full_name;
             hoverZoom.displayPicFromElement(link);
             return;
           }
@@ -309,7 +351,9 @@ hoverZoomPlugins.push({
         browser.runtime.sendMessage(
           {
             action: "ajaxGet",
-            url: "https://www.instagram.com/api/v1/users/web_profile_info/?username=" + username,
+            url:
+              "https://www.instagram.com/api/v1/users/web_profile_info/?username=" +
+              username,
             headers: [{ header: "X-IG-App-ID", value: "936619743392459" }],
           },
           function (response) {
@@ -321,19 +365,26 @@ hoverZoomPlugins.push({
               // store user data
               instagramUsersData[username] = o;
               try {
-                sessionStorage.setItem("instagramUsersData", JSON.stringify(instagramUsersData));
+                sessionStorage.setItem(
+                  "instagramUsersData",
+                  JSON.stringify(instagramUsersData),
+                );
               } catch {
                 // reset sessionStorage
                 let instagramUserData = instagramUsersData[username];
                 instagramUsersData = {};
                 instagramUsersData[username] = instagramUserData;
-                sessionStorage.setItem("instagramUsersData", JSON.stringify(instagramUsersData));
+                sessionStorage.setItem(
+                  "instagramUsersData",
+                  JSON.stringify(instagramUsersData),
+                );
               }
               callback(link, pluginName);
               // Media is displayed iff the cursor is still over the media
-              if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+              if (link.data().hoverZoomMouseOver)
+                hoverZoom.displayPicFromElement(link);
             } catch {}
-          }
+          },
         );
       })
       .on("mouseleave", function () {
@@ -358,7 +409,8 @@ hoverZoomPlugins.push({
         let mediaId = undefined;
 
         // lookup sessionStorage
-        let instagramMediaData = sessionStorage.getItem("instagramMediaData") || "{}";
+        let instagramMediaData =
+          sessionStorage.getItem("instagramMediaData") || "{}";
         try {
           instagramMediaData = JSON.parse(instagramMediaData);
           if (instagramMediaData[shortcode]) {
@@ -368,7 +420,8 @@ hoverZoomPlugins.push({
             return;
           } else {
             // find media id associated to shortcode in user data
-            let instagramUsersData = sessionStorage.getItem("instagramUsersData") || "{}";
+            let instagramUsersData =
+              sessionStorage.getItem("instagramUsersData") || "{}";
             instagramUsersData = JSON.parse(instagramUsersData);
             if (instagramUsersData[userName]) {
               const values = hoverZoom.getValuesInJsonObject(
@@ -376,13 +429,13 @@ hoverZoomPlugins.push({
                 shortcode,
                 true,
                 true,
-                true
+                true,
               ); // look for a full match & stop after 1st match
               if (values.length) {
                 // extract object containing media id
                 const o = hoverZoom.getJsonObjectFromPath(
                   instagramUsersData[userName],
-                  values[0].path.substring(0, values[0].path.lastIndexOf("["))
+                  values[0].path.substring(0, values[0].path.lastIndexOf("[")),
                 );
                 mediaId = o.id;
               }
@@ -409,23 +462,31 @@ hoverZoomPlugins.push({
               const o = JSON.parse(response);
               const items0 = o.items[0];
               // store media data
-              var instagramMediaData = sessionStorage.getItem("instagramMediaData") || "{}";
+              var instagramMediaData =
+                sessionStorage.getItem("instagramMediaData") || "{}";
               instagramMediaData = JSON.parse(instagramMediaData);
               instagramMediaData[shortcode] = items0;
               try {
-                sessionStorage.setItem("instagramMediaData", JSON.stringify(instagramMediaData));
+                sessionStorage.setItem(
+                  "instagramMediaData",
+                  JSON.stringify(instagramMediaData),
+                );
               } catch {
                 // reset sessionStorage
                 instagramMediaData = {};
                 instagramMediaData[shortcode] = items0;
-                sessionStorage.setItem("instagramMediaData", JSON.stringify(instagramMediaData));
+                sessionStorage.setItem(
+                  "instagramMediaData",
+                  JSON.stringify(instagramMediaData),
+                );
               }
               displayMedia(link, items0);
               callback(link, pluginName);
               // Media is displayed iff the cursor is still over the media
-              if (link.data().hoverZoomMouseOver) hoverZoom.displayPicFromElement(link);
+              if (link.data().hoverZoomMouseOver)
+                hoverZoom.displayPicFromElement(link);
             } catch {}
-          }
+          },
         );
       })
       .on("mouseleave", function () {
@@ -448,18 +509,20 @@ hoverZoomPlugins.push({
         try {
           if (items0.clips_metadata.original_sound_info) {
             audioUrl =
-              items0.clips_metadata.original_sound_info.progressive_download_url + ".audiomuted"; // there is already a soundtrack in video, this one is only for download
+              items0.clips_metadata.original_sound_info
+                .progressive_download_url + ".audiomuted"; // there is already a soundtrack in video, this one is only for download
           } else if (items0.clips_metadata.music_info) {
             audioUrl =
-              items0.clips_metadata.music_info.music_asset_info.progressive_download_url +
-              ".audiomuted"; // there is already a soundtrack in video, this one is only for download
+              items0.clips_metadata.music_info.music_asset_info
+                .progressive_download_url + ".audiomuted"; // there is already a soundtrack in video, this one is only for download
           }
         } catch {}
 
         // try to extract subtitles url (might not be present)
         let subtitlesUrl;
         try {
-          if (items0.video_subtitles_uri) subtitlesUrl = items0.video_subtitles_uri + ".subtitles";
+          if (items0.video_subtitles_uri)
+            subtitlesUrl = items0.video_subtitles_uri + ".subtitles";
         } catch {}
 
         let videoAudioSubtitlesUrl = videoUrl;
@@ -483,7 +546,9 @@ hoverZoomPlugins.push({
         // carousel might mix images & videos
         carousel.map((c) => {
           gallery.push([
-            c.video_versions ? c.video_versions[0].url : c.image_versions2.candidates[0].url,
+            c.video_versions
+              ? c.video_versions[0].url
+              : c.image_versions2.candidates[0].url,
           ]);
           captions.push(caption ?? "");
         });
@@ -515,7 +580,7 @@ hoverZoomPlugins.push({
         shortcode = shortcode.substring(0, 11);
       }
       const o = shortcode.replace(/\S/g, (m) =>
-        (ig_alphabet.indexOf(m) >>> 0).toString(2).padStart(6, "0")
+        (ig_alphabet.indexOf(m) >>> 0).toString(2).padStart(6, "0"),
       ); // base64 to binary
       return BigInt("0b" + o).toString(10); // binary to decimal
     }
@@ -568,12 +633,12 @@ hoverZoomPlugins.push({
                 try {
                   if (items0.clips_metadata.original_sound_info) {
                     audioUrl =
-                      items0.clips_metadata.original_sound_info.progressive_download_url +
-                      ".audiomuted"; // there is already a soundtrack in video, this one is only for download
+                      items0.clips_metadata.original_sound_info
+                        .progressive_download_url + ".audiomuted"; // there is already a soundtrack in video, this one is only for download
                   } else if (items0.clips_metadata.music_info) {
                     audioUrl =
-                      items0.clips_metadata.music_info.music_asset_info.progressive_download_url +
-                      ".audiomuted"; // there is already a soundtrack in video, this one is only for download
+                      items0.clips_metadata.music_info.music_asset_info
+                        .progressive_download_url + ".audiomuted"; // there is already a soundtrack in video, this one is only for download
                   }
                 } catch {}
 
@@ -627,7 +692,7 @@ hoverZoomPlugins.push({
                 hoverZoom.displayPicFromElement(link);
               }
             } catch {}
-          }
+          },
         );
       });
   },

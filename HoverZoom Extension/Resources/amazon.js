@@ -16,7 +16,9 @@ hoverZoomPlugins.push({
       var reUrl = /.*url\s*\(\s*(.*)\s*\).*/i;
       backgroundImage = backgroundImage.replace(reUrl, "$1");
       // remove leading & trailing quotes
-      var backgroundImageUrl = backgroundImage.replace(/^['"]/, "").replace(/['"]+$/, "");
+      var backgroundImageUrl = backgroundImage
+        .replace(/^['"]/, "")
+        .replace(/['"]+$/, "");
       var fullsizeUrl = backgroundImageUrl.replace(reFullsize, reReplace);
       if (fullsizeUrl != backgroundImageUrl) {
         var link = $(this);

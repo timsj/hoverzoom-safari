@@ -26,7 +26,10 @@ document.addEventListener("DOMContentLoaded", function () {
       // Notify all tabs about the change
       browser.tabs.query({}, function (tabs) {
         tabs.forEach(function (tab) {
-          if (tab.url && (tab.url.startsWith("http://") || tab.url.startsWith("https://"))) {
+          if (
+            tab.url &&
+            (tab.url.startsWith("http://") || tab.url.startsWith("https://"))
+          ) {
             browser.tabs
               .sendMessage(tab.id, {
                 action: "optionsChanged",
