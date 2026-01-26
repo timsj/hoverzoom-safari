@@ -26,7 +26,9 @@ function ge(s) {
 
 function parentNodeName(e, tag) {
   var p = e.parentNode;
-  if (!p) { return null; }
+  if (!p) {
+    return null;
+  }
   if (p && p.nodeName == tag.toUpperCase()) {
     return p;
   } else {
@@ -61,8 +63,7 @@ const optionsStorageRemove = async (keys) => {
 
 // Session storage - Safari may not support chrome.storage.session, fallback to local
 const sessionStorageGet = async (keys) => {
-  if (!browser.storage.session)
-    return localStorageGet(keys);
+  if (!browser.storage.session) return localStorageGet(keys);
   return new Promise((resolve, reject) => {
     browser.storage.session.get(keys, function (result) {
       resolve(result);
@@ -71,8 +72,7 @@ const sessionStorageGet = async (keys) => {
 };
 
 const sessionStorageSet = async (keys) => {
-  if (!browser.storage.session)
-    return localStorageSet(keys);
+  if (!browser.storage.session) return localStorageSet(keys);
   return new Promise((resolve, reject) => {
     browser.storage.session.set(keys, function () {
       resolve();
@@ -81,8 +81,7 @@ const sessionStorageSet = async (keys) => {
 };
 
 const sessionStorageRemove = async (keys) => {
-  if (!browser.storage.session)
-    return localStorageRemove(keys);
+  if (!browser.storage.session) return localStorageRemove(keys);
   return new Promise((resolve, reject) => {
     browser.storage.session.remove(keys, function () {
       resolve();

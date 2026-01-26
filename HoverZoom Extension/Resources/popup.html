@@ -1,28 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="popup.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
     <div class="popup-container">
-        <div class="header">
-            <img src="images/icon-48.png" alt="HoverZoom+" class="logo">
-            <h1>HoverZoom+</h1>
-        </div>
-        <p class="tagline">Hover over images to zoom</p>
-        <div class="toggle-container">
-            <label class="toggle">
-                <input type="checkbox" id="enableToggle" checked>
-                <span class="slider"></span>
-            </label>
-            <span id="statusText">Enabled</span>
-        </div>
-        <div class="info">
-            <button id="optionsBtn">Options</button>
-            <p class="version"><a href="https://github.com/timsj/hoverzoom-safari/commit/__COMMIT_HASH__" target="_blank">v1.0 (__COMMIT_HASH__)</a></p>
-        </div>
+      <div class="header">
+        <img src="images/icon-48.png" alt="HoverZoom+" class="logo" />
+        <h1>HoverZoom+</h1>
+      </div>
+      <p class="tagline">Hover over images to zoom</p>
+      <div class="toggle-container">
+        <label class="toggle">
+          <input type="checkbox" id="enableToggle" checked />
+          <span class="slider"></span>
+        </label>
+        <span id="statusText">Enabled</span>
+      </div>
+      <div class="info">
+        <button id="optionsBtn">Options</button>
+        <p class="version">
+          <a href="https://github.com/timsj/hoverzoom-safari/commit/__COMMIT_HASH__" target="_blank"
+            >v1.0 (__COMMIT_HASH__)</a
+          >
+        </p>
+      </div>
     </div>
     <script src="popup.js"></script>
-</body>
+  </body>
 </html>
