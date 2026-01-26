@@ -252,7 +252,6 @@ button:not(.primary):hover {
 }
 
 .version {
-  margin-left: auto;
   font-size: 11px;
   color: var(--text-secondary);
 }
