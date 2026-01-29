@@ -62,7 +62,9 @@
 			);
 			explicitFolders = (
 				Resources/_locales,
+				Resources/css,
 				Resources/images,
+				Resources/js,
 			);
 			path = "HoverZoom Extension";
 			sourceTree = "<group>";

@@ -15,30 +15,30 @@
   },
 
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["js/core/background.js"],
     "persistent": false
   },
 
   "content_scripts": [
     {
       "js": [
-        "jquery.js",
-        "tools.js",
-        "common.js",
-        "hoverzoom.js",
-        "default.js",
-        "content.js"
+        "js/lib/jquery.js",
+        "js/core/tools.js",
+        "js/core/common.js",
+        "js/core/hoverzoom.js",
+        "js/plugins/default.js",
+        "js/core/content.js"
       ],
       "matches": ["<all_urls>"],
       "run_at": "document_end"
     },
     {
-      "js": ["reddit.js"],
+      "js": ["js/plugins/reddit.js"],
       "matches": ["*://*.reddit.com/*"],
       "run_at": "document_end"
     },
     {
-      "js": ["twitter.js"],
+      "js": ["js/plugins/twitter.js"],
       "matches": [
         "*://*.twitter.com/*",
         "*://*.x.com/*",
@@ -47,17 +47,17 @@
       "run_at": "document_end"
     },
     {
-      "js": ["imgur.js"],
+      "js": ["js/plugins/imgur.js"],
       "matches": ["*://*.imgur.com/*"],
       "run_at": "document_end"
     },
     {
-      "js": ["youtube.js"],
+      "js": ["js/plugins/youtube.js"],
       "matches": ["*://*.youtube.com/*"],
       "run_at": "document_end"
     },
     {
-      "js": ["amazon.js"],
+      "js": ["js/plugins/amazon.js"],
       "matches": [
         "*://*.amazon.com/*",
         "*://*.amazon.com.au/*",
@@ -81,7 +81,7 @@
       "run_at": "document_end"
     },
     {
-      "js": ["google.js"],
+      "js": ["js/plugins/google.js"],
       "matches": [
         "*://*.google.com/*",
         "*://*.google.co.uk/*",
@@ -107,17 +107,17 @@
       "run_at": "document_end"
     },
     {
-      "js": ["instagram.js"],
+      "js": ["js/plugins/instagram.js"],
       "matches": ["*://*.instagram.com/*"],
       "run_at": "document_end"
     },
     {
-      "js": ["facebook.js"],
+      "js": ["js/plugins/facebook.js"],
       "matches": ["*://*.facebook.com/*"],
       "run_at": "document_end"
     },
     {
-      "js": ["pinterest.js"],
+      "js": ["js/plugins/pinterest.js"],
       "matches": [
         "*://*.pinterest.com/*",
         "*://*.pinterest.ca/*",
@@ -146,7 +146,7 @@
       "run_at": "document_end"
     },
     {
-      "js": ["flickr.js"],
+      "js": ["js/plugins/flickr.js"],
       "matches": ["*://*.flickr.com/*", "*://*.flickr.net/*"],
       "run_at": "document_end"
     }
