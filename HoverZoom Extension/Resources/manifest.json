@@ -47,16 +47,6 @@
       "run_at": "document_end"
     },
     {
-      "js": ["js/plugins/imgur.js"],
-      "matches": ["*://*.imgur.com/*"],
-      "run_at": "document_end"
-    },
-    {
-      "js": ["js/plugins/youtube.js"],
-      "matches": ["*://*.youtube.com/*"],
-      "run_at": "document_end"
-    },
-    {
       "js": ["js/plugins/amazon.js"],
       "matches": [
         "*://*.amazon.com/*",
@@ -151,7 +141,16 @@
       "run_at": "document_end"
     },
     {
-      "js": ["js/plugins/mediawiki.js"],
+      "js": [
+        "js/plugins/mediawiki_a.js",
+        "js/plugins/flickr_a.js",
+        "js/plugins/imgur_a.js",
+        "js/plugins/facebook_a.js",
+        "js/plugins/google_a.js",
+        "js/plugins/instagram_a.js",
+        "js/plugins/twitter_a.js",
+        "js/plugins/youtube_a.js"
+      ],
       "matches": ["<all_urls>"],
       "run_at": "document_end"
     }

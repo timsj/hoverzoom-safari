@@ -1,6 +1,6 @@
 var hoverZoomPlugins = hoverZoomPlugins || [];
 hoverZoomPlugins.push({
-  name: "MediaWiki",
+  name: "MediaWiki_a",
   version: "1.2",
   prepareImgLinks: function (callback) {
     var res = [];
