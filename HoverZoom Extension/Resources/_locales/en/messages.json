@@ -4,7 +4,7 @@
     "description": "The display name for the extension."
   },
   "extension_description": {
-    "message": "Enlarge thumbnails on mouse over. Works on many sites including Facebook, Twitter, Flickr, Reddit, Amazon, Tumblr, and more.",
+    "message": "Enlarge thumbnails on mouse over. Works on many sites including Facebook, Twitter, Flickr, Reddit, Amazon, and more.",
     "description": "Description of what the extension does."
   }
 }
