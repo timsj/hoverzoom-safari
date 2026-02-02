@@ -149,6 +149,11 @@
       "js": ["js/plugins/flickr.js"],
       "matches": ["*://*.flickr.com/*", "*://*.flickr.net/*"],
       "run_at": "document_end"
+    },
+    {
+      "js": ["js/plugins/mediawiki.js"],
+      "matches": ["<all_urls>"],
+      "run_at": "document_end"
     }
   ],
 
