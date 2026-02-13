@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
     browser.runtime.openOptionsPage();
   });
 
+  // Set version from manifest
+  const manifest = browser.runtime.getManifest();
+  document.getElementById("version").textContent = manifest.version;
+
   // Load current state
   browser.storage.sync.get({ extensionEnabled: true }, function (result) {
     toggle.checked = result.extensionEnabled;
