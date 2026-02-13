@@ -138,11 +138,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 22EEE5F02F1DCED5004C495B /* Build configuration list for PBXNativeTarget "HoverZoom Extension" */;
 			buildPhases = (
-				22EEE6002F1DCED5004C495B /* Inject Commit Hash */,
+				22EEE6002F1DCED5004C495B /* Inject Build Info */,
 				22EEE5D22F1DCED5004C495B /* Sources */,
 				22EEE5D32F1DCED5004C495B /* Frameworks */,
 				22EEE5D42F1DCED5004C495B /* Resources */,
-				22EEE6012F1DCED5004C495B /* Restore Placeholder */,
+				22EEE6012F1DCED5004C495B /* Restore Build Info */,
 			);
 			buildRules = (
 			);
@@ -214,7 +214,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		22EEE6002F1DCED5004C495B /* Inject Commit Hash */ = {
+		22EEE6002F1DCED5004C495B /* Inject Build Info */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -224,16 +224,16 @@
 			);
 			inputPaths = (
 			);
-			name = "Inject Commit Hash";
+			name = "Inject Build Info";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/scripts/inject-commit-hash.sh\"\n";
+			shellScript = "\"$SRCROOT/scripts/inject-build-info.sh\"\n";
 		};
-		22EEE6012F1DCED5004C495B /* Restore Placeholder */ = {
+		22EEE6012F1DCED5004C495B /* Restore Build Info */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -243,14 +243,14 @@
 			);
 			inputPaths = (
 			);
-			name = "Restore Placeholder";
+			name = "Restore Build Info";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/scripts/restore-placeholder.sh\"\n";
+			shellScript = "\"$SRCROOT/scripts/restore-build-info.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

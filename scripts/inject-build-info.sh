@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Inject commit hash into popup.html and options.html
+# Inject commit hash and version into extension resource files
 # Run this script from the project root or as an Xcode build phase
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,7 +15,7 @@ if [ -z "$COMMIT_HASH" ]; then
     COMMIT_HASH="dev"
 fi
 
-# Replace placeholder with actual commit hash in both files
+# Replace commit hash placeholder in popup.html and options.html
 for file in "$RESOURCES_DIR/popup.html" "$RESOURCES_DIR/options.html"; do
     if [ -f "$file" ]; then
         sed -i '' "s/__COMMIT_HASH__/$COMMIT_HASH/g" "$file"
@@ -24,3 +24,11 @@ for file in "$RESOURCES_DIR/popup.html" "$RESOURCES_DIR/options.html"; do
 done
 
 echo "Commit hash: $COMMIT_HASH"
+
+# Replace version placeholder in manifest.json using Xcode's MARKETING_VERSION
+if [ -n "$MARKETING_VERSION" ]; then
+    sed -i '' "s/__VERSION__/$MARKETING_VERSION/g" "$RESOURCES_DIR/manifest.json"
+    echo "Injected version $MARKETING_VERSION into manifest.json"
+else
+    echo "Warning: MARKETING_VERSION not set, skipping version injection"
+fi
