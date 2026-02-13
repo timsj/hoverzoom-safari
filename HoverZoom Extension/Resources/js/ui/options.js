@@ -2,6 +2,10 @@
 // Options page functionality
 
 document.addEventListener("DOMContentLoaded", async function () {
+  // Set version from manifest
+  const manifest = browser.runtime.getManifest();
+  document.getElementById("version").textContent = manifest.version;
+
   // Load current options
   await loadOptionsUI();
 
