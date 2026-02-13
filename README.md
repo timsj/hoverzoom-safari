@@ -1,6 +1,6 @@
 # HoverZoom+ for Safari
 
-A Safari port of the popular [HoverZoom+](https://github.com/extesy/hoverzoom) extension. There are currently no plans to distribute pre-built binaries or to go through the Apple Developer Program for signing/notarization, so you will have to build the extension from source on your own machine.
+A port of the popular [HoverZoom+](https://github.com/extesy/hoverzoom) extension for Safari on macOS. There are currently no plans to distribute this extension via the Mac App Store, so you will have to build the extension from source on your own machine.
 
 ## Requirements
 
