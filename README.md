@@ -1,6 +1,6 @@
 # HoverZoom+ for Safari
 
-A port of the popular [HoverZoom+](https://github.com/extesy/hoverzoom) extension for Safari on macOS. There are currently no plans to distribute this extension via the Mac App Store, so you will have to build the extension from source on your own machine.
+A port of the popular [Hover Zoom+](https://github.com/extesy/hoverzoom) extension for Safari on macOS. There are currently no plans to distribute this extension via the Mac App Store, so you will have to build the extension from source on your own machine.
 
 ## Requirements
 
@@ -59,7 +59,7 @@ Some sites like DuckDuckGo use strict Content Security Policy (CSP) headers that
 
 ## Credits
 
-This is a Safari port of [HoverZoom+](https://github.com/extesy/hoverzoom) by extesy. All credit for the core functionality and site plugins goes to the original project contributors.
+This is a Safari port of [Hover Zoom+](https://github.com/extesy/hoverzoom) by extesy. All credit for the core functionality and site plugins goes to the original project contributors.
 
 ## License
 
