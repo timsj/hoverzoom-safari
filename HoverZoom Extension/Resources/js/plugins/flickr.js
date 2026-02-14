@@ -34,44 +34,42 @@ hoverZoomPlugins.push({
     // Hook Flickr 'Open' XMLHttpRequests to catch data & metadata associated with pictures displayed
     // These requests are issued by client side to Flickr servers in order to obtain new data when user scrolls down
     // Hooked data is stored in sessionStorage and limited to 10 responses
-    if ($("script.hoverZoomHook").length == 0) {
+    if (document.querySelector("script.hoverZoomHook") == null) {
       // Inject hook script in document if not already there
       var hookScript = document.createElement("script");
       hookScript.type = "text/javascript";
       hookScript.text = `if (typeof oldXHROpen !== 'function') { // Hook only once!
-
-                oldXHROpen = window.XMLHttpRequest.prototype.open;
-                window.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
-                    // catch responses
-                    this.addEventListener('load', function() {
-                        try {
-                            // filter responses
-                            if (/secret/.test(this.responseText)) {
-
-                                // store response as plain text in a sessionStorage for later usage by plug-in
-                                // responses are concatenated & separated by this tag: <HOOKED_DATA_SPLITTER>
-                                let sep = '<HOOKED_DATA_SPLITTER>';
-                                let oldHookedData = sessionStorage.getItem('hookedData');
-                                if (oldHookedData) {
-                                    // if more than 10 responses then only keep 10 latest responses
-                                    let oldHookedDataA = oldHookedData.split(sep);
-                                    let newHookedData = oldHookedDataA.slice(Math.max(0, oldHookedDataA.length - 10)).join(sep);
-                                    sessionStorage.setItem('hookedData', newHookedData + sep + this.responseText);
-                                }
-                                else sessionStorage.setItem('hookedData', this.responseText);
-
-                                // Add & remove empty <a> element to/from DOM to trigger HoverZoom,
-                                // so hooked data can be exploited
-                                let fakeA = document.createElement('a');
-                                (document.head || document.documentElement).appendChild(fakeA);
-                                (document.head || document.documentElement).removeChild(fakeA);
-                            }
-                        } catch {}
-                    });
-                    // Proceed with original function
-                    return oldXHROpen.apply(this, arguments);
+        oldXHROpen = window.XMLHttpRequest.prototype.open;
+        window.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+          // catch responses
+          this.addEventListener('load', function() {
+            try {
+              // filter responses
+              if (/secret/.test(this.responseText)) {
+                // store response as plain text in a sessionStorage for later usage by plug-in
+                // responses are concatenated & separated by this tag: <HOOKED_DATA_SPLITTER>
+                let sep = '<HOOKED_DATA_SPLITTER>';
+                let oldHookedData = sessionStorage.getItem('hookedData');
+                if (oldHookedData) {
+                  // if more than 10 responses then only keep 10 latest responses
+                  let oldHookedDataA = oldHookedData.split(sep);
+                  let newHookedData = oldHookedDataA.slice(Math.max(0, oldHookedDataA.length - 10)).join(sep);
+                  sessionStorage.setItem('hookedData', newHookedData + sep + this.responseText);
                 }
-            }`;
+                else sessionStorage.setItem('hookedData', this.responseText);
+
+                // Add & remove empty <a> element to/from DOM to trigger HoverZoom,
+                // so hooked data can be exploited
+                let fakeA = document.createElement('a');
+                (document.head || document.documentElement).appendChild(fakeA);
+                (document.head || document.documentElement).removeChild(fakeA);
+              }
+            } catch {}
+          });
+          // Proceed with original function
+          return oldXHROpen.apply(this, arguments);
+        }
+      }`;
       hookScript.classList.add("hoverZoomHook");
       (document.head || document.documentElement).appendChild(hookScript);
     }

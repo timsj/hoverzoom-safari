@@ -27,53 +27,51 @@ hoverZoomPlugins.push({
 
     var fb_dtsg = undefined;
     var innerHTML = document.documentElement.innerHTML;
-    var hookedData = sessionStorage.getItem("hookedData");
-
     // Hook Facebook 'Open' XMLHttpRequests to catch data & metadata associated with pictures displayed
     // These requests are issued by client side to Facebook servers in order to obtain new data when user scrolls down
     // SECURITY NOTE: XHR hooking is required to intercept Facebook's API responses
     // which contain high-resolution image URLs not available in page HTML.
     // This is a privacy/security trade-off necessary for the extension's core functionality.
     // Hooked data is stored in sessionStorage and limited to image-related responses only.
-    if ($("script.hoverZoomHook").length == 0) {
+    if (document.querySelector("script.hoverZoomHook") == null) {
       // Inject hook script in document if not already there
       var hookScript = document.createElement("script");
       hookScript.type = "text/javascript";
       hookScript.text = `if (typeof oldXHROpen !== 'function') { // Hook only once!
-                oldXHROpen = window.XMLHttpRequest.prototype.open;
-                window.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
-                    var requestUrl = url;
-                    // catch responses
-                    this.addEventListener('load', function() {
-                        try {
-                            const data = this.responseText || "";
-                            // Only capture responses that look like they contain image data
-                            // Filter for Facebook GraphQL/API responses with image URLs
-                            if (data.length < 500000 && (data.indexOf('scontent') != -1 || data.indexOf('fbcdn') != -1)) {
-                                var HZFacebookOpenData = sessionStorage.getItem('HZFacebookOpenData') || '[]';
-                                HZFacebookOpenData = JSON.parse(HZFacebookOpenData);
-                                const j = JSON.parse(data);
-                                // Limit stored items to prevent memory issues
-                                if (HZFacebookOpenData.length > 50) {
-                                    HZFacebookOpenData = HZFacebookOpenData.slice(-25);
-                                }
-                                HZFacebookOpenData.push(j);
-                                // update sessionStorage, if no more room then reset
-                                try {
-                                    sessionStorage.setItem('HZFacebookOpenData', JSON.stringify(HZFacebookOpenData));
-                                } catch {
-                                    // reset sessionStorage
-                                    HZFacebookOpenData = [];
-                                    HZFacebookOpenData.push(j);
-                                    sessionStorage.setItem('HZFacebookOpenData', JSON.stringify(HZFacebookOpenData));
-                                }
-                            }
-                        } catch {}
-                    });
-                    // Proceed with original function
-                    return oldXHROpen.apply(this, arguments);
+        oldXHROpen = window.XMLHttpRequest.prototype.open;
+        window.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+          var requestUrl = url;
+          // catch responses
+          this.addEventListener('load', function() {
+            try {
+              const data = this.responseText || "";
+              // Only capture responses that look like they contain image data
+              // Filter for Facebook GraphQL/API responses with image URLs
+              if (data.length < 500000 && (data.indexOf('scontent') != -1 || data.indexOf('fbcdn') != -1)) {
+                var HZFacebookOpenData = sessionStorage.getItem('HZFacebookOpenData') || '[]';
+                HZFacebookOpenData = JSON.parse(HZFacebookOpenData);
+                const j = JSON.parse(data);
+                // Limit stored items to prevent memory issues
+                if (HZFacebookOpenData.length > 50) {
+                  HZFacebookOpenData = HZFacebookOpenData.slice(-25);
                 }
-            }`;
+                HZFacebookOpenData.push(j);
+                // update sessionStorage, if no more room then reset
+                try {
+                  sessionStorage.setItem('HZFacebookOpenData', JSON.stringify(HZFacebookOpenData));
+                } catch {
+                  // reset sessionStorage
+                  HZFacebookOpenData = [];
+                  HZFacebookOpenData.push(j);
+                  sessionStorage.setItem('HZFacebookOpenData', JSON.stringify(HZFacebookOpenData));
+                }
+              }
+            } catch {}
+          });
+          // Proceed with original function
+          return oldXHROpen.apply(this, arguments);
+        }
+      }`;
       hookScript.classList.add("hoverZoomHook");
       (document.head || document.documentElement).appendChild(hookScript);
     }

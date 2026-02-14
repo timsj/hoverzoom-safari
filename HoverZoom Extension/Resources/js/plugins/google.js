@@ -3,6 +3,44 @@ hoverZoomPlugins.push({
   name: "Google",
   version: "5.0",
   prepareImgLinks: function (callback) {
+    // Hook Google 'Open' XMLHttpRequests to catch data & metadata associated with pictures displayed
+    // These requests are issued by client side to Google servers in order to obtain new data when user scrolls down
+    // SECURITY NOTE: XHR hooking is required to intercept Google's API responses
+    // which contain full-resolution image URLs not available in page HTML.
+    // This is a privacy/security trade-off necessary for the extension's core functionality.
+    // Hooked data is stored in sessionStorage
+    if (document.querySelector("script.hoverZoomHook") == null) {
+      // Inject hook script in document if not already there
+      var hookScript = document.createElement("script");
+      hookScript.type = "text/javascript";
+      hookScript.text = `if (typeof oldXHROpen !== 'function') { // Hook only once!
+        oldXHROpen = window.XMLHttpRequest.prototype.open;
+        window.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+          // catch responses
+          this.addEventListener('load', function() {
+            try {
+              // store response as plain text in a sessionStorage for later usage by plug-in
+              let hoverZoomXHROpenData = sessionStorage.getItem('hoverZoomXHROpenData');
+              if (hoverZoomXHROpenData == undefined) {
+                sessionStorage.setItem('hoverZoomXHROpenData', this.responseText);
+              } else {
+                // update sessionStorage, if no more room then reset
+                try {
+                  sessionStorage.setItem('hoverZoomXHROpenData', hoverZoomXHROpenData + this.responseText);
+                } catch {
+                  sessionStorage.setItem('hoverZoomXHROpenData', this.responseText);
+                }
+              }
+            } catch {}
+          });
+          // Proceed with original function
+          return oldXHROpen.apply(this, arguments);
+        }
+      }`;
+      hookScript.classList.add("hoverZoomHook");
+      (document.head || document.documentElement).appendChild(hookScript);
+    }
+
     var res = [];
     var initData = null;
     var hookedData = sessionStorage.getItem("hoverZoomXHROpenData");
