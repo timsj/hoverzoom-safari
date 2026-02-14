@@ -1,4 +1,4 @@
-// HoverZoom+ Safari Port - content.js
+// Hover Zoom+ Safari Port - content.js
 // Content script initialization for Safari WebExtension
 
 // The hoverzoom.js file auto-initializes by calling hoverZoom.loadHoverZoom() at the end

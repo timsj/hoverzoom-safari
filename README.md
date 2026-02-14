@@ -1,4 +1,4 @@
-# HoverZoom+ for Safari
+# HoverZoom for Safari
 
 A port of the popular [Hover Zoom+](https://github.com/extesy/hoverzoom) extension for Safari on macOS. There are currently no plans to distribute this extension via the Mac App Store, so you will have to build the extension from source on your own machine.
 

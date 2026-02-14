@@ -1,4 +1,4 @@
-// HoverZoom+ Safari Port - default.js plugin
+// Hover Zoom+ Safari Port - default.js plugin
 // Fallback plugin for generic image/video/audio links
 
 var hoverZoomPlugins = hoverZoomPlugins || [];

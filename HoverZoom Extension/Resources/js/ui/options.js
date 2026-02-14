@@ -1,4 +1,4 @@
-// HoverZoom+ Safari Port - options.js
+// Hover Zoom+ Safari Port - options.js
 // Options page functionality
 
 document.addEventListener("DOMContentLoaded", async function () {

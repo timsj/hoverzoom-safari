@@ -1,4 +1,4 @@
-// HoverZoom+ Safari Port - tools.js
+// Hover Zoom+ Safari Port - tools.js
 // Adapted from original HoverZoom+ extension for Safari WebExtension API
 
 const isChromiumBased = false; // Safari is not Chromium-based

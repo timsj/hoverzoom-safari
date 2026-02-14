@@ -1,4 +1,4 @@
-// HoverZoom+ Safari Port - popup.js
+// Hover Zoom+ Safari Port - popup.js
 // Popup script for the toolbar button
 
 document.addEventListener("DOMContentLoaded", function () {

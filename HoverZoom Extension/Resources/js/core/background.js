@@ -1,4 +1,4 @@
-// HoverZoom+ Safari Port - background.js
+// Hover Zoom+ Safari Port - background.js
 // Service worker / background script for Safari WebExtension
 
 let options;

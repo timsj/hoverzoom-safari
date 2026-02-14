@@ -1,4 +1,4 @@
-// HoverZoom+ Safari Port - common.js
+// Hover Zoom+ Safari Port - common.js
 // Adapted from original HoverZoom+ extension for Safari WebExtension API
 
 const factorySettings = {
