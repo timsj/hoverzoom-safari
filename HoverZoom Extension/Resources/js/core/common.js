@@ -22,6 +22,7 @@ const factorySettings = {
   galleriesMouseWheel: true,
   galleriesLoopEnabled: true,
   disableMouseWheelForVideo: false,
+  scrollWheelCooldown: 0,
   alwaysPreload: false,
   displayDelay: 100,
   displayDelayVideo: 500,

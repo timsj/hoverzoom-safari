@@ -139,7 +139,8 @@ var hoverZoom = {
       titledElements = null,
       body100pct = true,
       linkRect = null,
-      noFocusMsgAlreadyDisplayed = false;
+      noFocusMsgAlreadyDisplayed = false,
+      lastScrollTime = 0;
     /*panning = true,
             panningThumb = null;*/
 
@@ -3428,10 +3429,12 @@ var hoverZoom = {
     }
 
     function documentOnMouseWheel(event) {
+      if (!imgFullSize) { return; }
+
+      var now = Date.now();
+
       if (viewerLocked) {
         event.preventDefault();
-        // Scale up or down locked viewer then clamp between 0.1x and 10x.
-        // For large imgs (= width or height > 1000px), a smaller step is needed
         let stepInit =
           0.1 /
           (1.0 +
@@ -3452,11 +3455,16 @@ var hoverZoom = {
         zoomFactor = Math.max(Math.min(zoomFactor, 10), stepInit);
         posViewer();
         panLockedViewer(event);
-      } else if (imgFullSize) {
+      } else {
+        if (now - lastScrollTime < options.scrollWheelCooldown) {
+          event.preventDefault();
+          return;
+        }
         var link = hz.currentLink,
           data = link.data();
         if (data.hoverZoomGallerySrc && data.hoverZoomGallerySrc.length !== 1) {
           event.preventDefault();
+          lastScrollTime = now;
           if (event.deltaY < 0) {
             rotateGalleryImg(-1);
           } else {
@@ -3466,6 +3474,7 @@ var hoverZoom = {
           var video = hz.hzViewer.find("video").get(0);
           if (video && !options.disableMouseWheelForVideo) {
             event.preventDefault();
+            lastScrollTime = now;
             if (event.deltaY < 0) {
               changeVideoPosition(-parseInt(options.videoPositionStep));
             } else {
