@@ -1,10 +1,94 @@
 // Hover Zoom+ Safari Port - options.js
 // Options page functionality
 
+// Every configurable action key, in the order shown on the options page. Labels are hardcoded
+// because this port's _locales only carries the extension name and description.
+const actionKeys = [
+  { key: "actionKey", label: "Activation key" },
+  { key: "toggleKey", label: "Toggle extension" },
+  { key: "closeKey", label: "Close viewer" },
+  { key: "hideKey", label: "Hide viewer (hold)" },
+  { key: "lockImageKey", label: "Lock viewer" },
+  { key: "fullZoomKey", label: "Full zoom (hold)" },
+  { key: "prevImgKey", label: "Previous image" },
+  { key: "nextImgKey", label: "Next image" },
+  { key: "flipImageKey", label: "Flip image" },
+  { key: "rotateImageKey", label: "Rotate image" },
+  { key: "copyImageKey", label: "Copy image" },
+  { key: "copyImageUrlKey", label: "Copy image URL" },
+  // saveImageKey is deliberately absent: Safari has no browser.downloads API, and the port has no
+  // background handler for downloadFile/downloadFileBlob, so the action can only ever fail.
+  // Re-add it once downloading is implemented via background fetch + a blob <a download>.
+  { key: "openImageInTabKey", label: "Open image in tab" },
+  { key: "openImageInWindowKey", label: "Open image in window" },
+  { key: "banKey", label: "Ban image" },
+];
+
+// These actions fire while the button is held, so a short click cannot be distinguished
+const noShortClick = ["actionKey", "toggleKey", "hideKey", "fullZoomKey"];
+
+function keyChoices(key) {
+  const choices = [
+    [0, key === "actionKey" ? "None (always active)" : "None"],
+    [-1, "Right Click (Hold)"],
+    [-2, "Middle Click (Hold)"],
+  ];
+  if (!noShortClick.includes(key)) {
+    choices.push([-3, "Right Click"], [-4, "Middle Click"]);
+  }
+  // Shift+click opens a new window in Safari, so it cannot be bound to the new-tab action
+  if (key !== "openImageInTabKey") choices.push([16, "Shift"]);
+  choices.push([17, "Ctrl"], [18, "Alt"], [13, "Enter"], [91, "Command"]);
+  for (let i = 65; i < 91; i++) choices.push([i, String.fromCharCode(i)]);
+  choices.push([220, "\\"]);
+  for (let i = 112; i < 124; i++) choices.push([i, "F" + (i - 111)]);
+  return choices.concat([
+    [27, "Escape"],
+    [33, "Page Up"],
+    [34, "Page Down"],
+    [35, "End"],
+    [36, "Home"],
+    [37, "Left"],
+    [38, "Up"],
+    [39, "Right"],
+    [40, "Down"],
+    [45, "Insert"],
+    [46, "Delete"],
+  ]);
+}
+
+function initActionKeys() {
+  const container = document.getElementById("actionKeys");
+  actionKeys.forEach(function ({ key, label }) {
+    const row = document.createElement("div");
+    row.className = "setting-row";
+
+    const labelEl = document.createElement("label");
+    labelEl.setAttribute("for", key);
+    labelEl.textContent = label + ":";
+
+    const select = document.createElement("select");
+    select.id = key;
+    keyChoices(key).forEach(function ([value, text]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = text;
+      select.appendChild(option);
+    });
+
+    row.appendChild(labelEl);
+    row.appendChild(select);
+    container.appendChild(row);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   // Set version from manifest
   const manifest = browser.runtime.getManifest();
   document.getElementById("version").textContent = manifest.version;
+
+  // Build the key pickers before loading, so their values can be applied
+  initActionKeys();
 
   // Load current options
   await loadOptionsUI();
@@ -97,7 +181,11 @@ async function loadOptionsUI() {
       options.fontOutline === true;
 
     // Behavior
-    document.getElementById("actionKey").value = options.actionKey || 0;
+    actionKeys.forEach(function ({ key }) {
+      const value = options[key];
+      document.getElementById(key).value =
+        value === undefined ? factorySettings[key] : value;
+    });
     document.getElementById("enableGalleries").checked =
       options.enableGalleries !== false;
     document.getElementById("galleriesMouseWheel").checked =
@@ -177,8 +265,7 @@ async function saveOptions() {
       fontSize: parseInt(document.getElementById("fontSize").value) || 11,
       fontOutline: document.getElementById("fontOutline").checked,
 
-      // Behavior
-      actionKey: parseInt(document.getElementById("actionKey").value) || 0,
+      // Behavior (action keys are added below)
       enableGalleries: document.getElementById("enableGalleries").checked,
       galleriesMouseWheel: document.getElementById("galleriesMouseWheel")
         .checked,
@@ -193,6 +280,36 @@ async function saveOptions() {
       maxHeight: parseInt(document.getElementById("maxHeight").value) || 0,
       debug: document.getElementById("debug").checked,
     };
+
+    // Action keys, plus the mouse-button flags the core derives from them. When the same button
+    // is bound twice, the second binding becomes the click-and-hold variant.
+    let rightButtonActive = false;
+    let middleButtonActive = false;
+    options.rightShortClick = false;
+    options.middleShortClick = false;
+    options.rightShortClickAndHold = false;
+    options.middleShortClickAndHold = false;
+
+    actionKeys.forEach(function ({ key }) {
+      options[key] = parseInt(document.getElementById(key).value) || 0;
+
+      switch (options[key]) {
+        case -3:
+          options.rightShortClick = true;
+        // falls through: a short right click is also a right-button binding
+        case -1:
+          if (rightButtonActive) options.rightShortClickAndHold = true;
+          else rightButtonActive = true;
+          break;
+        case -4:
+          options.middleShortClick = true;
+        // falls through: a short middle click is also a middle-button binding
+        case -2:
+          if (middleButtonActive) options.middleShortClickAndHold = true;
+          else middleButtonActive = true;
+          break;
+      }
+    });
 
     await browser.storage.sync.set(options);
 
