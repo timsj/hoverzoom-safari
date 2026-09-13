@@ -555,14 +555,16 @@ var hoverZoom = {
         hz.hzViewer.width("auto").height("auto");
         //hz.hzViewer.css('visibility', 'visible');
 
-        // image natural dimensions
+        // image natural dimensions (videos expose these as videoWidth/videoHeight)
 
-        srcDetails.naturalWidth = imgFullSize[0].naturalWidth
-          ? imgFullSize[0].naturalWidth
-          : imgFullSize.width();
-        srcDetails.naturalHeight = imgFullSize[0].naturalHeight
-          ? imgFullSize[0].naturalHeight
-          : imgFullSize.height();
+        srcDetails.naturalWidth =
+          imgFullSize[0].naturalWidth ||
+          imgFullSize[0].videoWidth ||
+          imgFullSize.width();
+        srcDetails.naturalHeight =
+          imgFullSize[0].naturalHeight ||
+          imgFullSize[0].videoHeight ||
+          imgFullSize.height();
 
         if (!srcDetails.naturalWidth || !srcDetails.naturalHeight) {
           return;
@@ -3604,7 +3606,11 @@ var hoverZoom = {
       const zoomFactorDefault = parseInt(options.zoomFactor);
       const useZoomFactor = options.lockImageZoomFactorEnabled;
       const width = imgFullSize.width() || imgFullSize[0].width;
-      const zoomFactorFit = width / srcDetails.naturalWidth;
+      // A video whose metadata has not arrived yet reports no intrinsic size. Falling through
+      // with a non-finite ratio poisons zoomFactor and strands viewerLocked, after which nothing
+      // else can zoom until the user clicks outside the viewer.
+      const ratio = width / srcDetails.naturalWidth;
+      const zoomFactorFit = isFinite(ratio) && ratio > 0 ? ratio : 1;
       if (!viewerLocked) {
         const zoomDefaultEnabled = options.lockImageZoomDefaultEnabled;
 
