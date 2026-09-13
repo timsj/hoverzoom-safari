@@ -1766,6 +1766,15 @@ var hoverZoom = {
 
     function loadFullSizeImage() {
       cLog("loadFullSizeImage");
+
+      // hardcode a bug fix for amazon tile image
+      if (
+        srcDetails.url &&
+        srcDetails.url.startsWith("https://m.media-amazon.") &&
+        srcDetails.url.endsWith("tile.gif")
+      )
+        return;
+
       // If no image is currently displayed...
       if (!imgFullSize) {
         hz.displayImgLoader("loading");
