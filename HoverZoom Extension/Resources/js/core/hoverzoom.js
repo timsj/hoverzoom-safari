@@ -193,18 +193,6 @@ var hoverZoom = {
           "1px 1px 5px rgba(0, 0, 0, 0.5), -1px 1px 5px rgba(0, 0, 0, 0.5), 1px -1px 5px rgba(0, 0, 0, 0.5), -1px -1px 5px rgba(0, 0, 0, 0.5)", // cast shadow in every direction
         "outline-style": "none",
       },
-      audioControlsWithVideoCss = {
-        opacity: "0",
-        position: "absolute",
-        left: "0",
-        top: "0",
-        "max-height": "20%",
-        "max-width": "90%",
-        margin: "0",
-        padding: "0",
-        transition: "opacity ease 1s",
-        "outline-style": "none",
-      },
       audioControlsCss = {
         opacity: "1",
         position: "absolute",
@@ -862,6 +850,17 @@ var hoverZoom = {
       }
 
       srcDetails.url = videourl;
+
+      // Reddit serves video and audio as separate streams. Use the HLS playlist instead so
+      // both are muxed into the video element, giving working audio via the video controls
+      // rather than a second set of audio controls. Safari plays HLS natively.
+      const redditMatch = srcDetails.url.match(
+        /https?:\/\/v\.redd\.it\/([a-zA-Z0-9]+)/,
+      );
+      if (redditMatch) {
+        srcDetails.url = `https://v.redd.it/${redditMatch[1]}/HLSPlaylist.m3u8`;
+        delete srcDetails.audioUrl;
+      }
     }
 
     function updateAmbilight() {
@@ -1025,8 +1024,7 @@ var hoverZoom = {
 
       imgFullSizeCss.borderWidth = imgFullSizeCss.borderRadius =
         thickness + "px";
-      audioControlsCss.margin = audioControlsWithVideoCss.margin =
-        thickness + "px";
+      audioControlsCss.margin = thickness + "px";
     }
 
     // set max width in pixels
@@ -1787,6 +1785,8 @@ var hoverZoom = {
 
         if (srcDetails.video) {
           getVideoAudioSubtitlesFromUrl();
+          // the url may have been rewritten to a playlist (e.g. Reddit HLS)
+          srcDetails.playlist = isPlaylistLink(srcDetails.url);
 
           if (!options.zoomVideos) {
             cancelSourceLoading();
@@ -1838,28 +1838,82 @@ var hoverZoom = {
 
           if (srcDetails.audioUrl) {
             const audio = document.createElement("audio");
-            audio.controls = viewerLocked;
+            audio.controls = false;
             audio.autoplay = false;
-            audio.muted = srcDetails.audioMuted ? true : options.muteVideos;
+            audio.loop = true;
+            audio.defaultMuted = srcDetails.audioMuted
+              ? true
+              : options.muteVideos;
+            audio.muted = audio.defaultMuted;
+            if (audio.defaultMuted) {
+              audio.setAttribute("muted", "");
+            }
             audio.volume = options.videoVolume;
             audio.src = srcDetails.audioUrl;
             audioControls = $(audio).appendTo(hz.hzViewer);
 
-            // synchronize audio controls with video controls
+            // synchronize audio with video controls
+            audio.addEventListener("loadedmetadata", function () {
+              audio.currentTime = video.currentTime;
+              audio.muted = srcDetails.audioMuted
+                ? true
+                : options.muteVideos || video.muted;
+              audio.volume = video.volume;
+              if (!video.paused) {
+                audio.play().catch(() => {});
+              }
+            });
+
             video.addEventListener("play", function () {
-              audio.play();
+              audio.muted = srcDetails.audioMuted ? true : video.muted;
+              audio.volume = video.volume;
+              audio.play().catch(() => {});
             });
 
             video.addEventListener("pause", function () {
               audio.pause();
             });
 
+            video.addEventListener("seeking", function () {
+              if (audio.readyState >= 1) {
+                audio.currentTime = video.currentTime;
+              }
+            });
+
             video.addEventListener("seeked", function () {
-              audio.currentTime = video.currentTime;
+              if (audio.readyState >= 1) {
+                audio.currentTime = video.currentTime;
+              }
             });
 
             video.addEventListener("volumechange", function () {
               audio.volume = video.volume;
+              audio.muted = srcDetails.audioMuted ? true : video.muted;
+            });
+
+            video.addEventListener("ratechange", function () {
+              audio.playbackRate = video.playbackRate;
+            });
+
+            video.addEventListener("waiting", function () {
+              audio.pause();
+            });
+
+            video.addEventListener("playing", function () {
+              audio.muted = srcDetails.audioMuted ? true : video.muted;
+              audio.volume = video.volume;
+              if (!video.paused) {
+                audio.play().catch(() => {});
+              }
+            });
+
+            video.addEventListener("timeupdate", function () {
+              if (
+                audio.readyState >= 1 &&
+                Math.abs(audio.currentTime - video.currentTime) > 0.3
+              ) {
+                audio.currentTime = video.currentTime;
+              }
             });
 
             audio.load();
@@ -2426,38 +2480,15 @@ var hoverZoom = {
 
       // in case of video:
       // - display video controls only when video is locked
-      // - display also audio controls if needed (distinct sources for audio & video)
+      // - separate audio stream is controlled by video controls (no duplicate controls)
       let video = hz.hzViewer.find("video")[0];
       if (video) {
         let audio = null;
         if (audioControls) audio = audioControls[0];
         if (audio)
-          $(audio)
-            .css(audioControlsWithVideoCss)
-            .appendTo(hz.hzViewer.hzContainer);
+          $(audio).css({ display: "none" }).appendTo(hz.hzViewer.hzContainer);
         if (viewerLocked) {
           video.controls = true;
-          if (audio) {
-            audio.controls = true;
-
-            $(audio).hover(function () {
-              clearTimeout(audio.controlsTimeout);
-              audio.style.opacity = 1;
-            });
-
-            imgFullSize.mousemove(function () {
-              clearTimeout(audio.controlsTimeout);
-              audio.style.opacity = 1;
-              audio.controlsTimeout = setTimeout(function () {
-                audio.style.opacity = 0;
-              }, 2500);
-            });
-
-            imgFullSize.mouseleave(function () {
-              clearTimeout(audio.controlsTimeout);
-              audio.style.opacity = 0;
-            });
-          }
         }
       } else {
         // audio controls alone
