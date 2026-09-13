@@ -4666,7 +4666,7 @@ var hoverZoom = {
             saveSubtitles();
           } else {
             alert(
-              'Saving media is disabled. To save media, please enable "saving media with action key" on the HoverZoom\'s advanced options page.',
+              "Saving media is not supported in the Safari version of HoverZoom+.",
             );
           }
         },

@@ -102,7 +102,7 @@ const factorySettings = {
   openImageInWindowKey: 87,
   openImageInTabKey: 84,
   lockImageKey: 76,
-  saveImageKey: 83,
+  saveImageKey: 0, // unbound: saving media is not implemented in the Safari port (no downloads API)
   prevImgKey: 37,
   nextImgKey: 39,
   flipImageKey: 70,
