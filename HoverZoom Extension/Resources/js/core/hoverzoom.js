@@ -1876,11 +1876,23 @@ var hoverZoom = {
                 })
                 .catch((error) => {
                   if (error.name === "NotAllowedError") {
-                    // NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
-                    $(hz.hzViewer.hzContainer).css(hz.hzContainerCss);
-                    cLog("Play not allowed: " + error);
-                    displayMsg("msgClickPageToPlayVideo");
-                    video.removeAttribute("poster");
+                    // Safari refuses to autoplay unmuted video without a prior user gesture, which
+                    // leaves the viewer frozen on the first frame. Muted autoplay is allowed, so
+                    // retry that way; sound is still reachable from the controls once locked.
+                    cLog("Play not allowed, retrying muted: " + error);
+                    video.muted = true;
+                    video
+                      .play()
+                      .then(() => {
+                        cLog("play started (muted)");
+                        video.removeAttribute("poster");
+                      })
+                      .catch((mutedError) => {
+                        $(hz.hzViewer.hzContainer).css(hz.hzContainerCss);
+                        cLog("Play not allowed: " + mutedError);
+                        displayMsg("msgClickPageToPlayVideo");
+                        video.removeAttribute("poster");
+                      });
                   } else {
                     cLog("Play error: " + error);
                   }
