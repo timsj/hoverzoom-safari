@@ -105,28 +105,43 @@ hoverZoomPlugins.push({
 
       if (link.data().hoverZoomPinLoading) return;
 
+      function hovered() {
+        return link.is(":hover") || link.find(":hover").length > 0;
+      }
+
       // Pinterest builds the <video> lazily once the pin is hovered, so it is usually missing on
       // the first mouseenter. Re-check it every hover instead of caching that first miss.
-      const videoEl =
-        link.find("video")[0] ||
-        link.closest('div[data-test-id="pinWrapper"]').find("video")[0];
-      if (videoEl) {
+      function useExistingVideo() {
+        const videoEl =
+          link.find("video")[0] ||
+          link.closest('div[data-test-id="pinWrapper"]').find("video")[0];
+        if (!videoEl) return false;
+
         const videoSrc =
           videoEl.currentSrc ||
           videoEl.src ||
           $(videoEl).find("source").attr("src");
         // an MSE blob url belongs to the page's own player and cannot be replayed in the viewer
-        if (videoSrc && /^https?:/i.test(videoSrc)) {
-          link.data().hoverZoomPin = pin;
-          link.data().hoverZoomPinVideoUrl = videoSrc;
-          link.data().hoverZoomSrc = [videoSrc];
-          callback($(link), pluginName);
-          if (link.is(":hover") || link.find(":hover").length > 0) {
-            hoverZoom.displayPicFromElement(link, true);
-          }
-          return;
+        if (!videoSrc || !/^https?:/i.test(videoSrc)) return false;
+
+        link.data().hoverZoomPin = pin;
+        link.data().hoverZoomPinVideoUrl = videoSrc;
+        link.data().hoverZoomSrc = [videoSrc];
+        callback($(link), pluginName);
+        if (hovered()) {
+          hoverZoom.displayPicFromElement(link, true);
         }
+        return true;
       }
+
+      if (useExistingVideo()) return;
+
+      // The player is often still being built on the first hover, so look once more before
+      // falling back to the network, as long as the pointer has not left the pin.
+      setTimeout(function () {
+        if (link.data().hoverZoomPinVideoUrl || !hovered()) return;
+        useExistingVideo();
+      }, 300);
 
       // only the network lookup below needs to be limited to once per pin
       if (link.data().hoverZoomPin == pin) return;
@@ -187,7 +202,7 @@ hoverZoomPlugins.push({
             link.data().hoverZoomPinCaption = caption;
           }
           callback($(link), pluginName);
-          if (link.is(":hover") || link.find(":hover").length > 0) {
+          if (hovered()) {
             hoverZoom.displayPicFromElement(link, true);
           }
         } else if (caption && !link.data().hoverZoomCaption) {
