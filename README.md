@@ -57,6 +57,10 @@ Some sites may not be fully supported or may have changed their structure since 
 
 Some sites like DuckDuckGo use strict Content Security Policy (CSP) headers that block the extension from loading full-resolution images from external domains. This is a browser-enforced security restriction that currently cannot be bypassed by the Safari extension.
 
+### Zoomed videos show a frozen frame instead of playing
+
+Check **Safari → Settings → Websites → Auto-Play** for the site in question. If it's set to **Never Auto-Play**, Safari blocks the zoomed video from starting, and the viewer shows its first frame instead. This applies even to muted video, so the extension cannot work around it. Setting the site to **Allow All Auto-Play** resolves it.
+
 ## Credits
 
 This is a Safari port of [Hover Zoom+](https://github.com/extesy/hoverzoom) by extesy. All credit for the core functionality and site plugins goes to the original project contributors.
