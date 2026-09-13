@@ -819,6 +819,13 @@ var hoverZoom = {
       return url.indexOf(".m3u8") !== -1 || url.indexOf(".mpd") !== -1;
     }
 
+    // Safari plays HLS natively, so .m3u8 goes through the regular <video> element instead of
+    // the hls.js playlist branch, which can never run here (hls.js is not bundled in this port).
+    // DASH (.mpd) has no native equivalent and stays unsupported.
+    function isHlsLink(url) {
+      return url.indexOf(".m3u8") !== -1;
+    }
+
     function isAudioLink(url) {
       if (url.indexOf(".audio") !== -1) {
         return true;
@@ -1823,7 +1830,8 @@ var hoverZoom = {
         hz.createHzViewer(!hideKeyDown);
         zoomFactor = parseInt(options.zoomFactor);
 
-        srcDetails.video = isVideoLink(srcDetails.url);
+        srcDetails.video =
+          isVideoLink(srcDetails.url) || isHlsLink(srcDetails.url);
         srcDetails.playlist = isPlaylistLink(srcDetails.url);
         srcDetails.audio = isAudioLink(srcDetails.url);
 
@@ -2015,8 +2023,13 @@ var hoverZoom = {
           });
           audio.load();
         } else if (srcDetails.playlist) {
-          // instantiate a specific player (= HLS) for playlists (= M3U8 files)
-          // this is needed for browsers that do not support natively playlists, such as Chrome
+          // Only DASH (.mpd) reaches this branch: HLS is played natively above. Upstream drives
+          // this with hls.js, which is not bundled here, so there is nothing to fall back to.
+          if (typeof Hls === "undefined") {
+            cLog("playlist not supported without hls.js: " + srcDetails.url);
+            cancelSourceLoading();
+            return;
+          }
 
           if (!options.zoomVideos) {
             cancelSourceLoading();
