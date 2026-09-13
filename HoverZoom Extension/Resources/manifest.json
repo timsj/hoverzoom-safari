@@ -174,10 +174,6 @@
     {
       "resources": ["images/loading.svg", "images/spectrogram.png"],
       "matches": ["<all_urls>"]
-    },
-    {
-      "resources": ["js/hooks/instagram.js"],
-      "matches": ["*://*.instagram.com/*"]
     }
   ]
 }

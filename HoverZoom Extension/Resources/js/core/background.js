@@ -61,11 +61,6 @@ async function ajaxRequest(request, sendResponse) {
     body: request.data,
   };
 
-  // plugins may need the user's session cookies of the requested host
-  if (request.credentials) {
-    fetchOptions.credentials = request.credentials;
-  }
-
   for (let i in request.headers) {
     fetchOptions.headers[request.headers[i].header] = request.headers[i].value;
   }
@@ -128,7 +123,6 @@ async function onMessage(message, sender, sendResponse) {
           response: message.response,
           url: message.url,
           headers: message.headers,
-          credentials: message.credentials,
         },
         sendResponse,
       );

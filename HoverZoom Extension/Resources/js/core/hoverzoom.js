@@ -5951,19 +5951,6 @@ var hoverZoom = {
       }
     }
   },
-
-  getCookie: function (cname) {
-    const name = `${cname.toLowerCase()}=`;
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const cookies = decodedCookie.split(";");
-    for (const cookie of cookies) {
-      const trimmedCookie = cookie.trim();
-      if (trimmedCookie.toLowerCase().startsWith(name)) {
-        return trimmedCookie.substring(name.length);
-      }
-    }
-    return "";
-  },
 };
 
 hoverZoom.loadHoverZoom();
