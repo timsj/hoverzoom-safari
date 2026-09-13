@@ -32,7 +32,13 @@ hoverZoomPlugins.push({
       if (src.indexOf(ext + "/") === -1) return;
 
       srcs.push(
-        src.substring(0, src.indexOf(ext) + ext.length).replace("thumb/", ""),
+        src
+          .substring(0, src.indexOf(ext) + ext.length)
+          // Wikimedia serves thumbnails from thumb.wikimedia.org but keeps originals on
+          // upload.wikimedia.org (phabricator T427465), so dropping the /thumb/ path segment
+          // is not enough — the host has to be swapped back as well.
+          .replace("://thumb.wikimedia.org/", "://upload.wikimedia.org/")
+          .replace("thumb/", ""),
       );
       _this.data().hoverZoomSrc = srcs;
       res.push(_this);

@@ -78,17 +78,20 @@ hoverZoomPlugins.push({
         }
 
         // Wikipedia/Wikimedia: convert thumbnail to full size
-        if (!fullSrc && this.src.indexOf("upload.wikimedia.org") !== -1) {
+        if (!fullSrc && /\/\/(upload|thumb)\.wikimedia\.org\//.test(this.src)) {
           // Thumbnail pattern: /thumb/a/ab/File.jpg/220px-File.jpg
           // Full size pattern: /a/ab/File.jpg
           const thumbMatch = this.src.match(
             /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-/i,
           );
           if (thumbMatch) {
-            fullSrc = this.src.replace(
-              /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-.+$/i,
-              "$1",
-            );
+            fullSrc = this.src
+              .replace(
+                /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-.+$/i,
+                "$1",
+              )
+              // originals stay on upload.wikimedia.org (phabricator T427465)
+              .replace("://thumb.wikimedia.org/", "://upload.wikimedia.org/");
           }
         }
 
@@ -171,15 +174,18 @@ hoverZoomPlugins.push({
         if (href.match(/\/wiki\/File:/i) || href.match(/\/wiki\/Image:/i)) {
           // Get full size from the thumbnail in the link
           const imgSrc = this.src;
-          if (imgSrc.indexOf("upload.wikimedia.org") !== -1) {
+          if (/\/\/(upload|thumb)\.wikimedia\.org\//.test(imgSrc)) {
             const thumbMatch = imgSrc.match(
               /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-/i,
             );
             if (thumbMatch) {
-              fullSrc = imgSrc.replace(
-                /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-.+$/i,
-                "$1",
-              );
+              fullSrc = imgSrc
+                .replace(
+                  /\/thumb(\/[a-z0-9]\/[a-z0-9]{2}\/.+?)\/\d+px-.+$/i,
+                  "$1",
+                )
+                // originals stay on upload.wikimedia.org (phabricator T427465)
+                .replace("://thumb.wikimedia.org/", "://upload.wikimedia.org/");
             }
           }
         }
