@@ -1182,7 +1182,7 @@ var hoverZoom = {
         (!now && !imgFullSize) ||
         !hz.hzViewer ||
         fullZoomKeyDown ||
-        viewerLocked
+        (!now && viewerLocked)
       ) {
         return;
       }
@@ -1196,24 +1196,32 @@ var hoverZoom = {
       if (loading) {
         now = true;
       }
+      function cleanupViewerState() {
+        stopMedias();
+        hzCaptionMiscellaneous = null;
+        hzDetails = null;
+        hz.hzViewer.empty();
+        if (imgFullSize) {
+          imgFullSize.remove();
+          imgFullSize = null;
+          viewerLocked = false;
+        }
+        if (audioControls) {
+          audioControls.remove();
+          audioControls = null;
+          viewerLocked = false;
+        }
+        srcDetails.url = null;
+      }
+
+      if (now) {
+        hz.hzViewer.stop(true, true).hide();
+        cleanupViewerState();
+        return;
+      }
       hz.hzViewer
         .stop(true, true)
-        .fadeOut(now ? 0 : options.fadeDuration, function () {
-          stopMedias();
-          hzCaptionMiscellaneous = null;
-          hzDetails = null;
-          hz.hzViewer.empty();
-          if (imgFullSize) {
-            imgFullSize.remove();
-            imgFullSize = null;
-            viewerLocked = false;
-          }
-          if (audioControls) {
-            audioControls.remove();
-            audioControls = null;
-            viewerLocked = false;
-          }
-        });
+        .fadeOut(options.fadeDuration, cleanupViewerState);
     }
 
     function normalizeSrc(hoverZoomSrcIndex, links, dataKey) {
@@ -1333,9 +1341,16 @@ var hoverZoom = {
             links.data().hoverZoomSrc[hoverZoomSrcIndex],
           );
           // Happens when the mouse goes from an image to another without hovering the page background
-          if (srcDetails.url && src !== srcDetails.url) {
+          if (
+            hz.currentLink &&
+            !links.is(hz.currentLink) &&
+            !hz.currentLink.has(links[0]).length &&
+            !links.has(hz.currentLink[0]).length &&
+            srcDetails.url &&
+            src !== srcDetails.url
+          ) {
             cLog(`hiding because ${src} !== ${srcDetails.url}`);
-            closeHoverZoomViewer();
+            closeHoverZoomViewer(true);
           }
 
           removeTitles(target);
@@ -1790,6 +1805,9 @@ var hoverZoom = {
 
     function loadFullSizeImage() {
       cLog("loadFullSizeImage");
+
+      // closing the viewer clears the url, and a queued load can still fire afterwards
+      if (!srcDetails.url) return;
 
       // hardcode a bug fix for amazon tile image
       if (
@@ -5004,8 +5022,12 @@ var hoverZoom = {
         loading = false;
         posViewer();
 
-        data = hz.currentLink.data();
-        if (data.hoverZoomGallerySrc.length > 0) {
+        var data = hz.currentLink ? hz.currentLink.data() : null;
+        if (
+          data &&
+          data.hoverZoomGallerySrc &&
+          data.hoverZoomGallerySrc.length > 0
+        ) {
           hzGallery.text(
             data.hoverZoomGalleryIndex +
               1 +
