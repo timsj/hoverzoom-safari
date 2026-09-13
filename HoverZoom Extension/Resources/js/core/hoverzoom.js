@@ -713,15 +713,39 @@ var hoverZoom = {
       }
     }
 
+    let lastClientPos = { x: null, y: null };
+
     function panLockedViewer(event) {
+      if (event && typeof event.clientX === "number") {
+        lastClientPos.x = event.clientX;
+        lastClientPos.y = event.clientY;
+      }
+      var clientX =
+        event && typeof event.clientX === "number"
+          ? event.clientX
+          : lastClientPos.x !== null
+            ? lastClientPos.x
+            : window.innerWidth / 2;
+      var clientY =
+        event && typeof event.clientY === "number"
+          ? event.clientY
+          : lastClientPos.y !== null
+            ? lastClientPos.y
+            : window.innerHeight / 2;
       var width =
-        imgFullSize[0].width || imgFullSize[0].videoWidth * zoomFactor;
+        imgFullSize[0].width ||
+        (imgFullSize[0].videoWidth
+          ? imgFullSize[0].videoWidth * zoomFactor
+          : 0);
       var height =
-        imgFullSize[0].height || imgFullSize[0].videoHeight * zoomFactor;
+        imgFullSize[0].height ||
+        (imgFullSize[0].videoHeight
+          ? imgFullSize[0].videoHeight * zoomFactor
+          : 0);
       var widthOffset = (width - window.innerWidth) / 2;
       var heightOffset = (height - window.innerHeight) / 2;
-      var ratioX = 1 - (2 * event.clientX) / window.innerWidth;
-      var ratioY = 1 - (2 * event.clientY) / window.innerHeight;
+      var ratioX = 1 - (2 * clientX) / window.innerWidth;
+      var ratioY = 1 - (2 * clientY) / window.innerHeight;
       var dx = widthOffset > 0 ? ratioX * (widthOffset + 50) : 0;
       var dy = heightOffset > 0 ? ratioY * (heightOffset + 50) : 0;
       hz.hzViewer.css("transform", `translate(${dx}px, ${dy}px)`);
@@ -1230,6 +1254,16 @@ var hoverZoom = {
         return;
       }
 
+      if (viewerLocked) {
+        // Don't hide cursor on locked viewer & allow clicking.
+        if (hz.hzViewer) {
+          hz.hzViewer.css("cursor", "pointer");
+          hz.hzViewer.css("pointer-events", "auto");
+        }
+        if (imgFullSize) panLockedViewer(event);
+        return;
+      }
+
       // check that mouse really moved
       if (
         lastMousePosTop !== mousePos.top ||
@@ -1237,16 +1271,6 @@ var hoverZoom = {
       ) {
         lastMousePosTop = mousePos.top;
         lastMousePosLeft = mousePos.left;
-
-        if (viewerLocked) {
-          // Don't hide cursor on locked viewer & allow clicking.
-          if (hz.hzViewer) {
-            hz.hzViewer.css("cursor", "pointer");
-            hz.hzViewer.css("pointer-events", "auto");
-          }
-          if (imgFullSize) panLockedViewer(event);
-          return;
-        }
 
         if (hz.hzViewer && imgFullSize) {
           showCursor();
@@ -1499,8 +1523,9 @@ var hoverZoom = {
           return false;
         // "Previous image" key
         case options.prevImgKey:
-          var linkData = hz.currentLink.data();
+          var linkData = hz.currentLink ? hz.currentLink.data() : null;
           if (
+            linkData &&
             linkData.hoverZoomGallerySrc &&
             linkData.hoverZoomGallerySrc.length > 1
           )
@@ -1509,8 +1534,9 @@ var hoverZoom = {
           return false;
         // "Next image" key
         case options.nextImgKey:
-          var linkData = hz.currentLink.data();
+          var linkData = hz.currentLink ? hz.currentLink.data() : null;
           if (
+            linkData &&
             linkData.hoverZoomGallerySrc &&
             linkData.hoverZoomGallerySrc.length > 1
           )
@@ -2881,6 +2907,9 @@ var hoverZoom = {
     }
 
     function cancelSourceLoading() {
+      if (viewerLocked) {
+        return;
+      }
       loading = false;
       hz.currentLink = null;
       clearTimeout(loadFullSizeImageTimeout);
@@ -3435,11 +3464,9 @@ var hoverZoom = {
         documentMouseUp(event);
       });
       $(document).keydown(documentOnKeyDown).keyup(documentOnKeyUp);
-      if (options.galleriesMouseWheel) {
-        window.addEventListener("wheel", documentOnMouseWheel, {
-          passive: false,
-        });
-      }
+      window.addEventListener("wheel", documentOnMouseWheel, {
+        passive: false,
+      });
       if (options.zoomVideos) {
         $(document).on("visibilitychange", closeHoverZoomViewer);
       }
@@ -3472,8 +3499,26 @@ var hoverZoom = {
       if (!imgFullSize) { return; }
 
       var now = Date.now();
+      var link = hz.currentLink,
+        data = link ? link.data() : null;
 
-      if (viewerLocked) {
+      if (
+        options.galleriesMouseWheel &&
+        data &&
+        data.hoverZoomGallerySrc &&
+        data.hoverZoomGallerySrc.length > 1
+      ) {
+        event.preventDefault();
+        if (now - lastScrollTime < options.scrollWheelCooldown) {
+          return;
+        }
+        lastScrollTime = now;
+        if (event.deltaY < 0) {
+          rotateGalleryImg(-1);
+        } else {
+          rotateGalleryImg(1);
+        }
+      } else if (viewerLocked) {
         event.preventDefault();
         let stepInit =
           0.1 /
@@ -3495,31 +3540,18 @@ var hoverZoom = {
         zoomFactor = Math.max(Math.min(zoomFactor, 10), stepInit);
         posViewer();
         panLockedViewer(event);
-      } else {
-        if (now - lastScrollTime < options.scrollWheelCooldown) {
+      } else if (!options.disableMouseWheelForVideo) {
+        var video = hz.hzViewer ? hz.hzViewer.find("video").get(0) : null;
+        if (video) {
           event.preventDefault();
-          return;
-        }
-        var link = hz.currentLink,
-          data = link.data();
-        if (data.hoverZoomGallerySrc && data.hoverZoomGallerySrc.length !== 1) {
-          event.preventDefault();
+          if (now - lastScrollTime < options.scrollWheelCooldown) {
+            return;
+          }
           lastScrollTime = now;
           if (event.deltaY < 0) {
-            rotateGalleryImg(-1);
+            changeVideoPosition(-parseInt(options.videoPositionStep));
           } else {
-            rotateGalleryImg(1);
-          }
-        } else {
-          var video = hz.hzViewer.find("video").get(0);
-          if (video && !options.disableMouseWheelForVideo) {
-            event.preventDefault();
-            lastScrollTime = now;
-            if (event.deltaY < 0) {
-              changeVideoPosition(-parseInt(options.videoPositionStep));
-            } else {
-              changeVideoPosition(parseInt(options.videoPositionStep));
-            }
+            changeVideoPosition(parseInt(options.videoPositionStep));
           }
         }
       }
@@ -3665,8 +3697,9 @@ var hoverZoom = {
         }
         // "Previous image" key
         if (keyCode === options.prevImgKey) {
-          var linkData = hz.currentLink.data();
+          var linkData = hz.currentLink ? hz.currentLink.data() : null;
           if (
+            linkData &&
             linkData.hoverZoomGallerySrc &&
             linkData.hoverZoomGallerySrc.length > 1
           )
@@ -3676,8 +3709,9 @@ var hoverZoom = {
         }
         // "Next image" key
         if (keyCode === options.nextImgKey) {
-          var linkData = hz.currentLink.data();
+          var linkData = hz.currentLink ? hz.currentLink.data() : null;
           if (
+            linkData &&
             linkData.hoverZoomGallerySrc &&
             linkData.hoverZoomGallerySrc.length > 1
           )
@@ -4904,8 +4938,12 @@ var hoverZoom = {
     function rotateGalleryImg(rot) {
       cLog("rotateGalleryImg(" + rot + ")");
       var link = hz.currentLink,
-        data = link.data();
-      if (!data.hoverZoomGallerySrc || data.hoverZoomGallerySrc.length === 1) {
+        data = link ? link.data() : null;
+      if (
+        !data ||
+        !data.hoverZoomGallerySrc ||
+        data.hoverZoomGallerySrc.length === 1
+      ) {
         return; // no gallery to rotate or gallery with only one image
       }
 
@@ -4943,11 +4981,18 @@ var hoverZoom = {
       let isImgLinkNext = isImageLink(srcDetails.url);
       if (isImgLinkPrev && isImgLinkNext) {
         imgFullSize
+          .off("load", nextGalleryImageOnLoad)
+          .off("error", srcFullSizeOnError);
+        imgFullSize
           .on("load", nextGalleryImageOnLoad)
           .on("error", srcFullSizeOnError)
           .attr("src", srcDetails.url);
       } else {
+        const wasLocked = viewerLocked;
         removeMedias();
+        if (wasLocked) {
+          viewerLocked = true;
+        }
         loadFullSizeImage();
       }
       getAdditionalInfosFromServer(srcDetails.url);
@@ -4974,6 +5019,9 @@ var hoverZoom = {
         }
 
         posViewer();
+        if (viewerLocked && imgFullSize) {
+          panLockedViewer();
+        }
       }
     }
 
