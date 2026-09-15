@@ -209,14 +209,30 @@ async function loadOptionsUI() {
   }
 }
 
+// Entries are matched against a url's hostname alone, so reduce whatever was pasted to that:
+// a full url, a bare domain and a fragment like "tiktok" all have to end up comparable.
+function normalizeExcludedSite(entry) {
+  return entry
+    .trim()
+    .replace(/^[a-z][a-z0-9+.-]*:\/\//i, "") // scheme
+    .replace(/^www\./i, "") // matching is a substring test, so www. only narrows it
+    .replace(/[/?#].*$/, "") // path, query, fragment
+    .replace(/:\d+$/, "") // port
+    .toLowerCase(); // hostname is always lowercase
+}
+
 async function saveOptions() {
   try {
     // Parse excluded sites
     const excludedSitesText = document.getElementById("excludedSites").value;
-    const excludedSites = excludedSitesText
-      .split("\n")
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
+    const excludedSites = [
+      ...new Set(
+        excludedSitesText
+          .split("\n")
+          .map(normalizeExcludedSite)
+          .filter((s) => s.length > 0),
+      ),
+    ];
 
     const options = {
       // General
