@@ -1281,7 +1281,6 @@ hoverZoomPlugins.push({
     }
 
     // mouseover event might not be received by img so fetch photo anyway
-    //$('img[src*="graph.facebook.com"]:not(.hoverZoomMouseover)').addClass('hoverZoomMouseover').one('mouseover', function () {
     $('img[src*="graph.facebook.com"]:not(.hoverZoomMouseover)')
       .addClass("hoverZoomMouseover")
       .each(function () {

@@ -1,7 +1,4 @@
 var hoverZoomPlugins = hoverZoomPlugins || [],
-  regexImgUrl =
-    /\.(jpe?g|gifv?|png|webm|mp4|3gpp|svg|webp|bmp|ico|xbm)([\?#].*)?$/i,
-  regexSpecialChars = /[\r\n\t\v\f]/g,
   regexForbiddenChars = /[\\/:*?"<>|~]/g,
   debug = false,
   logger = new Logger(),
@@ -17,12 +14,6 @@ function cLog(msg) {
 function cTime(msg) {
   if (debug) {
     console.time(msg);
-  }
-}
-
-function cTimeLog(msg) {
-  if (debug) {
-    console.timeLog(msg);
   }
 }
 
@@ -552,7 +543,6 @@ var hoverZoom = {
 
         imgFullSize.width("auto").height("auto");
         hz.hzViewer.width("auto").height("auto");
-        //hz.hzViewer.css('visibility', 'visible');
 
         // image natural dimensions (videos expose these as videoWidth/videoHeight)
 
@@ -959,15 +949,6 @@ var hoverZoom = {
       if (isVideo) window.setTimeout(updateAmbilight, 30);
     }
 
-    function isPointInRect(point, rect) {
-      return (
-        point.top > rect.top &&
-        point.top < rect.bottom &&
-        point.left > rect.left &&
-        point.left < rect.right
-      );
-    }
-
     function posWhileLoading() {
       if (loading) {
         posViewer();
@@ -1230,29 +1211,6 @@ var hoverZoom = {
       hz.hzViewer
         .stop(true, true)
         .fadeOut(options.fadeDuration, cleanupViewerState);
-    }
-
-    function normalizeSrc(hoverZoomSrcIndex, links, dataKey) {
-      var data = links.data()[dataKey];
-      if (!data) {
-        return undefined;
-      }
-
-      var src = data[hoverZoomSrcIndex];
-      if (src && src.indexOf("http") !== 0) {
-        if (src.indexOf("//") !== 0) {
-          if (src.indexOf("/") !== 0) {
-            // Image has relative path (doesn't start with '/')
-            var path = window.location.pathname;
-            path = path.substr(0, path.lastIndexOf("/") + 1);
-            src = path + src;
-          }
-          src = "//" + window.location.host + src;
-        }
-        src = window.location.protocol + src;
-        links.data()[dataKey][hoverZoomSrcIndex] = src;
-      }
-      return src;
     }
 
     var lastMousePosTop = -1,
@@ -2578,8 +2536,6 @@ var hoverZoom = {
         if (!options.ambilightEnabled && options.frameThickness != "0")
           imgFullSize.css("background-color", options.frameBackgroundColor);
 
-        //hz.hzViewer.css('cursor', 'pointer');
-
         if (viewerLocked) {
           // Allow clicking on locked image.
           hz.hzViewer.css("pointer-events", "auto");
@@ -3060,12 +3016,6 @@ var hoverZoom = {
             }
           }
 
-          // Avoid nested links
-          /*if (link.parents('.hoverZoomLink').length > 0) {
-                        return;
-                    }
-                    link.find('.hoverZoomLink').removeClass('hoverZoomLink');*/
-
           showPageAction = true;
 
           link.addClass("hoverZoomLink");
@@ -3166,33 +3116,6 @@ var hoverZoom = {
       return url.hostname;
     }
 
-    function getHref(img) {
-      if (img == undefined) {
-        return undefined;
-      }
-      var href = img.prop("href");
-
-      if (href == undefined) {
-        href = img.parents("[href]").prop("href");
-      }
-
-      // remove invalid hrefs
-      if (href && /mailto/.test(href.toLowerCase())) {
-        href = undefined;
-      }
-
-      // replace useless href (= img url) by something more usefull
-      if (href && href.match(regexImgUrl)) {
-        href = window.location.href;
-      }
-
-      // use location's href in last resort (not very specific)
-      if (!href) {
-        href = window.location.href;
-      }
-
-      return href;
-    }
     function prepareDownscaledImages() {
       // Excluded sites
       if (["www.facebook.com"].indexOf(location.host) > -1) {
@@ -3368,10 +3291,6 @@ var hoverZoom = {
 
     function bindObserver() {
       observer.observe(document.body, { childList: true, subtree: true });
-    }
-
-    function unbindObserver() {
-      observer.disconnect();
     }
 
     function windowOnDOMMutation(mutations, observer) {
