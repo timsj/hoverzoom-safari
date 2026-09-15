@@ -19,7 +19,6 @@ const actionKeys = [
   // saveImageKey is deliberately absent: Safari has no browser.downloads API
   { key: "openImageInTabKey", label: "Open image in tab" },
   { key: "openImageInWindowKey", label: "Open image in window" },
-  { key: "banKey", label: "Ban image" },
 ];
 
 // These actions fire while the button is held, so a short click cannot be distinguished

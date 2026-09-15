@@ -59,7 +59,6 @@ function Logger() {
 
 var hoverZoom = {
   options: {},
-  bannedImages: {},
   currentLink: null,
   hzViewer: null,
   hzLoader: null,
@@ -1400,20 +1399,8 @@ var hoverZoom = {
                     ? options.displayDelayVideo
                     : options.displayDelay;
 
-              if (srcDetails.audioUrl) {
-                if (!isImageBanned(srcDetails.audioUrl)) {
-                  loadFullSizeImageTimeout = setTimeout(
-                    loadFullSizeImage,
-                    delay,
-                  );
-                }
-              } else if (srcDetails.url) {
-                if (!isImageBanned(srcDetails.url)) {
-                  loadFullSizeImageTimeout = setTimeout(
-                    loadFullSizeImage,
-                    delay,
-                  );
-                }
+              if (srcDetails.audioUrl || srcDetails.url) {
+                loadFullSizeImageTimeout = setTimeout(loadFullSizeImage, delay);
               }
 
               loading = true;
@@ -3370,22 +3357,11 @@ var hoverZoom = {
       });
     }
 
-    // check if url of image, video or audio track belongs to ban list
-    function isImageBanned(url) {
-      if (!url) return false;
-      // return bannedImages.has(url);
-      return false;
-    }
-
     // deals with messages sent by background.js
     function onMessage(message, sender, sendResponse) {
       if (message.action === "optionsChanged") {
         options = message.options;
         applyOptions();
-      }
-
-      if (message.action === "bannedImagesChanged") {
-        // bannedImages = message.list;
       }
     }
 
@@ -3662,21 +3638,6 @@ var hoverZoom = {
         if (hz.hzViewer) {
           pauseMedias();
           hz.hzViewer.hide();
-        }
-        if (imgFullSize) {
-          return false;
-        }
-      }
-
-      // ban key (close zoomed image + add to page's ban list) is pressed down
-      // => zoomed image is closed immediately
-      // => zoomed image url is added to page's ban list
-      if (event.which === options.banKey) {
-        hz.hzViewerLocked = viewerLocked = false;
-        if (hz.hzViewer) {
-          stopMedias();
-          hz.hzViewer.hide();
-          banImage();
         }
         if (imgFullSize) {
           return false;
@@ -4604,23 +4565,6 @@ var hoverZoom = {
         hz.hzViewer.css("transform", "none");
       }
       if (options.ambilightEnabled) updateAmbilight();
-    }
-
-    // store url(s) of image, video or audio track that should not be zoomed again
-    function banImage() {
-      if (srcDetails.audioUrl) {
-        browser.runtime.sendMessage({
-          action: "banImage",
-          url: srcDetails.audioUrl,
-          location: window.location.href,
-        });
-      } else if (srcDetails.url) {
-        browser.runtime.sendMessage({
-          action: "banImage",
-          url: srcDetails.url,
-          location: window.location.href,
-        });
-      }
     }
 
     function saveImage() {

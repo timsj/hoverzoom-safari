@@ -193,62 +193,10 @@ async function onMessage(message, sender, sendResponse) {
       break;
     }
 
-    case "banImage":
-      await banImage(message);
-      break;
-
-    case "resetBannedImages":
-      await resetBannedImages();
-      break;
-
-    case "isImageBanned":
-      sendResponse(await isImageBanned(message));
-      break;
-
     default:
       // Unknown action
       break;
   }
-}
-
-// Add url of image, video or audio track to the banlist
-async function banImage(message) {
-  const url = message.url;
-  if (!url) return;
-
-  let result = await browser.storage.local.get("HoverZoomBannedUrls");
-  let bannedUrls = result.HoverZoomBannedUrls || "{}";
-  try {
-    let update = false;
-    bannedUrls = JSON.parse(bannedUrls);
-    if (url && !bannedUrls[url]) {
-      bannedUrls[url] = { location: message.location };
-      update = true;
-    }
-    if (update) {
-      await browser.storage.local.set({
-        HoverZoomBannedUrls: JSON.stringify(bannedUrls),
-      });
-    }
-  } catch {}
-}
-
-// Clear list of banned image, video or audio track urls
-async function resetBannedImages() {
-  await browser.storage.local.remove("HoverZoomBannedUrls");
-}
-
-// Check if url belongs to the banlist
-async function isImageBanned(message) {
-  const url = message.url;
-  let result = await browser.storage.local.get("HoverZoomBannedUrls");
-  let bannedUrls = result.HoverZoomBannedUrls || "{}";
-  try {
-    bannedUrls = JSON.parse(bannedUrls);
-  } catch {
-    return false;
-  }
-  return bannedUrls[url];
 }
 
 // Bind events

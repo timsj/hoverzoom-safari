@@ -98,7 +98,6 @@ const factorySettings = {
   copyImageKey: 67,
   copyImageUrlKey: 85,
   hideKey: 88,
-  banKey: 66,
   openImageInWindowKey: 87,
   openImageInTabKey: 84,
   lockImageKey: 76,
