@@ -55,7 +55,8 @@ function keyChoices(key) {
 }
 
 function initActionKeys() {
-  const container = document.getElementById("actionKeys");
+  // Rows replace the placeholder; nesting would break the section's :last-child divider.
+  const anchor = document.getElementById("actionKeys");
   actionKeys.forEach(function ({ key, label }) {
     const row = document.createElement("div");
     row.className = "setting-row";
@@ -75,8 +76,9 @@ function initActionKeys() {
 
     row.appendChild(labelEl);
     row.appendChild(select);
-    container.appendChild(row);
+    anchor.parentNode.insertBefore(row, anchor);
   });
+  anchor.remove();
 }
 
 document.addEventListener("DOMContentLoaded", async function () {

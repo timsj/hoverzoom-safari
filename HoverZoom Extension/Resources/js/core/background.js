@@ -186,8 +186,7 @@ async function onMessage(message, sender, sendResponse) {
       break;
 
     case "openViewWindow": {
-      // incognito is dropped: it is only ever false here, and Safari rejects the key unless
-      // the extension is enabled for private browsing.
+      // incognito is always false here and Safari rejects it outside private browsing.
       const { incognito, ...createData } = message.createData;
       browser.windows.create(createData).catch(cLog);
       break;

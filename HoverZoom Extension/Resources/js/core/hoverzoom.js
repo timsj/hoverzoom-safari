@@ -2647,8 +2647,7 @@ var hoverZoom = {
         options.showWhileLoading ? 0 : 10,
       );
 
-      // Upstream marks the hovered image and link as visited here so they turn purple
-      // (upstream #881). Safari supports no part of the history API, so it is omitted.
+      // Upstream marks these visited here so links turn purple (#881); Safari has no history API.
     }
 
     function displayCaptionMiscellaneousDetails() {
