@@ -4,9 +4,9 @@ A port of the popular [Hover Zoom+](https://github.com/extesy/hoverzoom) extensi
 
 ## Requirements
 
-- macOS 10.14 or later
-- Safari 14 or later
-- Xcode 14 or later
+- macOS 13.0 or later
+- Safari 16 or later
+- Xcode 16 or later
 - A valid Apple ID account
 
 ## Installation
