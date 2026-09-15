@@ -16,9 +16,7 @@ const actionKeys = [
   { key: "rotateImageKey", label: "Rotate image" },
   { key: "copyImageKey", label: "Copy image" },
   { key: "copyImageUrlKey", label: "Copy image URL" },
-  // saveImageKey is deliberately absent: Safari has no browser.downloads API, and the port has no
-  // background handler for downloadFile/downloadFileBlob, so the action can only ever fail.
-  // Re-add it once downloading is implemented via background fetch + a blob <a download>.
+  // saveImageKey is deliberately absent: Safari has no browser.downloads API
   { key: "openImageInTabKey", label: "Open image in tab" },
   { key: "openImageInWindowKey", label: "Open image in window" },
   { key: "banKey", label: "Ban image" },
@@ -209,8 +207,7 @@ async function loadOptionsUI() {
   }
 }
 
-// Entries are matched against a url's hostname alone, so reduce whatever was pasted to that:
-// a full url, a bare domain and a fragment like "tiktok" all have to end up comparable.
+// Entries are matched against a url's hostname alone, so reduce whatever was pasted to that
 function normalizeExcludedSite(entry) {
   return entry
     .trim()

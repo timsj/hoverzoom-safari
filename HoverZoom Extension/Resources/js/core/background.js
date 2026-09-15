@@ -185,6 +185,14 @@ async function onMessage(message, sender, sendResponse) {
       );
       break;
 
+    case "openViewWindow": {
+      // incognito is dropped: it is only ever false here, and Safari rejects the key unless
+      // the extension is enabled for private browsing.
+      const { incognito, ...createData } = message.createData;
+      browser.windows.create(createData).catch(cLog);
+      break;
+    }
+
     case "banImage":
       await banImage(message);
       break;

@@ -2660,25 +2660,8 @@ var hoverZoom = {
         options.showWhileLoading ? 0 : 10,
       );
 
-      cLog("checking for history permission");
-      browser.runtime.sendMessage(
-        { action: "getPermissionsContains", permissions: ["history"] },
-        function (hasPermission) {
-          if (hasPermission && !browser.extension.inIncognitoContext) {
-            browser.runtime.sendMessage({
-              action: "addUrlToHistory",
-              url: srcDetails.url,
-            });
-            // #881: add link url to history if available, this is needed to turn hovered links purple
-            let linkUrl = hz.currentLink.prop("href");
-            if (linkUrl && linkUrl != srcDetails.url)
-              browser.runtime.sendMessage({
-                action: "addUrlToHistory",
-                url: linkUrl,
-              });
-          }
-        },
-      );
+      // Upstream marks the hovered image and link as visited here so they turn purple
+      // (upstream #881). Safari supports no part of the history API, so it is omitted.
     }
 
     function displayCaptionMiscellaneousDetails() {
@@ -3159,8 +3142,6 @@ var hoverZoom = {
       if (options.alwaysPreload) {
         clearTimeout(preloadTimeout);
         preloadTimeout = setTimeout(hz.preloadImages, 800);
-      } else {
-        browser.runtime.sendMessage({ action: "preloadAvailable" });
       }
 
       prepareDownscaledImagesAsync();
@@ -3387,11 +3368,6 @@ var hoverZoom = {
         options = result;
         applyOptions();
       });
-    }
-
-    // get list of banned image, video or audio track urls
-    function loadBannedImages() {
-      browser.runtime.sendMessage({ action: "sendBannedImages" });
     }
 
     // check if url of image, video or audio track belongs to ban list
@@ -5119,7 +5095,6 @@ var hoverZoom = {
 
     browser.runtime.onMessage.addListener(onMessage);
     loadOptions();
-    loadBannedImages();
 
     // In case we are being used on a website that removes us from the DOM, update the internal data structure to reflect this
     var target = document.getElementsByTagName("html")[0];
@@ -5364,11 +5339,6 @@ var hoverZoom = {
       var link = links.eq(preloadIndex++);
       if (link.data().hoverZoomPreloaded) {
         preloadNextImage();
-        browser.runtime.sendMessage({
-          action: "preloadProgress",
-          value: preloadIndex,
-          max: links.length,
-        });
       } else {
         var hoverZoomSrcIndex = link.data().hoverZoomSrcIndex || 0;
         var nextSrc = link.data().hoverZoomSrc
@@ -5379,11 +5349,6 @@ var hoverZoom = {
             .on("load", function () {
               link.data().hoverZoomPreloaded = true;
               setTimeout(preloadNextImage, preloadDelay);
-              browser.runtime.sendMessage({
-                action: "preloadProgress",
-                value: preloadIndex,
-                max: links.length,
-              });
             })
             .on("error", function () {
               if (hoverZoomSrcIndex < link.data().hoverZoomSrc.length - 1) {
