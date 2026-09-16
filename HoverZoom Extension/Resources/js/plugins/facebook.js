@@ -221,16 +221,6 @@ hoverZoomPlugins.push({
     // March, 2021 : Facebook modified the way fb_dtsg value is encoded in document, making this method obsolete
     // get fb_dtsg from document
     // sample : {"name":"fb_dtsg","value":"AQGTALQ9UBXa:AQG-mujgyqQp"}
-    function findFbDtsg_obsolete() {
-      let index1 = innerHTML.indexOf('{"name":"fb_dtsg"');
-      if (index1 == -1) return undefined;
-      let index2 = innerHTML.indexOf("}", index1);
-      let fbDtsgJson = innerHTML.substring(index1, index2 + 1);
-      let fbdtsg = JSON.parse(fbDtsgJson).value;
-      cLog("fb_dtsg: ", fbdtsg);
-      return fbdtsg;
-    }
-
     // get fb_dtsg from document
     // samples :
     // ["DTSGInitialData",[],{"token":"AQGNKxGZChye:AQE6nMJf1oiR"},258]

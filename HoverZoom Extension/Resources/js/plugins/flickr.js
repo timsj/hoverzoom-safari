@@ -251,17 +251,6 @@ hoverZoomPlugins.push({
     }
 
     // Find node with good id
-    function FindNode(nodes, id) {
-      node = null;
-      $(nodes).each(function () {
-        if (this.value.id == id) {
-          node = this.value;
-          return false;
-        }
-      });
-      return node;
-    }
-
     // Search id through values from modelExportJson (stored in page in a script)
     function searchModelExport(id) {
       cLog("searchModelExport");
@@ -345,8 +334,6 @@ hoverZoomPlugins.push({
     }
 
     const regexImg = /\/([0-9]{4,})_[0-9a-f]{4,}/; //sample: //live.staticflickr.com/8154/7179847951_1e25e9d7e8_z.jpg -> 7179847951
-    const regexImgBuddy = /buddyicons\/([0-9]{4,}@N[0-9]{1,})/; //sample: //live.staticflickr.com/456/buddyicons/71402340@N00_r.jpg?1485566646#71402340@N00 -> 71402340@N00
-    const regexImgCover = /coverphoto\/([0-9]{4,}@N[0-9]{1,})/; //sample: //live.staticflickr.com/5549/coverphoto/71402340@N00_h.jpg?1478371839#71402340@N00 -> 71402340@N00
 
     // sample urls:
     // live.staticflickr.com/8154/7179847951_1e25e9d7e8_z.jpg
@@ -354,49 +341,6 @@ hoverZoomPlugins.push({
     // live.staticflickr.com/456/buddyicons/71402340@N00_r.jpg?1485566646#71402340@N00
     // live.staticflickr.com/5549/coverphoto/71402340@N00_h.jpg?1478371839#71402340@N00
     // https://combo.staticflickr.com/pw/images/coverphoto00_h.jpg.v3
-
-    function fetchPhoto(link, url) {
-      // extract photo id from url
-      let matchesImg = url.match(regexImg);
-      let idImg = null;
-      if (matchesImg) idImg = matchesImg.length > 1 ? matchesImg[1] : null;
-
-      let matchesImgBuddy = url.match(regexImgBuddy);
-      let idImgBuddy = null;
-      if (matchesImgBuddy)
-        idImgBuddy = matchesImgBuddy.length > 1 ? matchesImgBuddy[1] : null;
-
-      let matchesImgCover = url.match(regexImgCover);
-      let idImgCover = null;
-      if (matchesImgCover)
-        idImgCover = matchesImgCover.length > 1 ? matchesImgCover[1] : null;
-
-      let id = null;
-      if (idImg) id = idImg;
-      else if (idImgBuddy) id = idImgBuddy;
-      else if (idImgCover) id = idImgCover;
-      if (id == null) return;
-
-      cLog("id: " + id);
-
-      // check sessionStorage in case url was already found through API call
-      let storedDataJson = sessionStorage.getItem(id);
-
-      if (storedDataJson == null) {
-        var dataFromModelExportJson = null;
-        var dataFromHookedDataJson = null;
-        dataFromModelExportJson = searchModelExport(id);
-        if (dataFromModelExportJson == null)
-          dataFromHookedDataJson = searchHookedDataA(id);
-      }
-
-      // extract url & metadata
-      if (storedDataJson) extractData(link, storedDataJson, id);
-      else if (dataFromModelExportJson)
-        extractData(link, dataFromModelExportJson, id);
-      else if (dataFromHookedDataJson)
-        extractData(link, dataFromHookedDataJson, id);
-    }
 
     function extractData(link, dataJson, id) {
       cLog("extractData");
