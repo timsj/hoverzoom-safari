@@ -81,6 +81,72 @@ function initActionKeys() {
   anchor.remove();
 }
 
+function initToc() {
+  const toc = document.querySelector(".toc");
+  const tocLinks = toc.querySelector(".toc-links");
+  const sections = [...document.querySelectorAll(".settings-section[id]")];
+  let clicked = null;
+
+  // Show the compact brand once the full header has scrolled away
+  new IntersectionObserver(function ([entry]) {
+    toc.classList.toggle("scrolled", !entry.isIntersecting);
+  }).observe(document.querySelector("header"));
+
+  const links = sections.map(function (section, i) {
+    const link = document.createElement("a");
+    link.href = "#" + section.id;
+    link.textContent = section.querySelector("h2").textContent;
+    link.addEventListener("click", function (event) {
+      clicked = i;
+      // The first section goes to the very top so the full header is back in view
+      if (i === 0) {
+        event.preventDefault();
+        window.scrollTo({ top: 0 });
+      }
+      update();
+    });
+    tocLinks.appendChild(link);
+    return link;
+  });
+
+  // Short trailing sections never reach the top, so honour a clicked link until the user scrolls.
+  ["wheel", "touchstart", "keydown"].forEach(function (type) {
+    window.addEventListener(type, () => (clicked = null), { passive: true });
+  });
+
+  function update() {
+    let current = 0;
+    sections.forEach(function (section, i) {
+      if (section.getBoundingClientRect().top <= 80) current = i;
+    });
+    const atBottom =
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight - 2;
+    if (atBottom) current = sections.length - 1;
+    if (clicked !== null) current = clicked;
+
+    links.forEach(function (link, i) {
+      if (i === current) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+  }
+
+  let pending = false;
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(function () {
+        pending = false;
+        update();
+      });
+    },
+    { passive: true },
+  );
+  update();
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   // Set version from manifest
   const manifest = browser.runtime.getManifest();
@@ -88,6 +154,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Build the key pickers before loading, so their values can be applied
   initActionKeys();
+  initToc();
 
   // Load current options
   await loadOptionsUI();
@@ -331,15 +398,15 @@ async function saveOptions() {
     sendOptions(options);
 
     // Show success message
-    showStatus("Options saved! Please refresh page(s) to see updates.");
+    showStatus("Settings saved! Please refresh page(s) to see updates.");
   } catch (error) {
     console.error("Error saving options:", error);
-    showStatus("Error saving options");
+    showStatus("Error saving settings");
   }
 }
 
 async function resetOptions() {
-  if (!confirm("Reset all options to defaults?")) {
+  if (!confirm("Reset all settings to defaults?")) {
     return;
   }
 
@@ -347,10 +414,10 @@ async function resetOptions() {
     await browser.storage.sync.clear();
     await browser.storage.sync.set(factorySettings);
     await loadOptionsUI();
-    showStatus("Options reset to defaults!");
+    showStatus("Settings reset to defaults!");
   } catch (error) {
     console.error("Error resetting options:", error);
-    showStatus("Error resetting options");
+    showStatus("Error resetting settings");
   }
 }
 

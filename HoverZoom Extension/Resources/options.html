@@ -2,19 +2,27 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>HoverZoom Options</title>
+    <title>HoverZoom Settings</title>
     <link rel="stylesheet" href="css/options.css" />
   </head>
   <body>
     <div class="container">
       <header>
         <img src="images/icon.svg" alt="HoverZoom" class="logo" />
-        <h1>HoverZoom Options</h1>
+        <h1>HoverZoom Settings</h1>
       </header>
+
+      <nav class="toc" aria-label="Sections">
+        <div class="toc-brand" aria-hidden="true">
+          <img src="images/icon.svg" alt="" />
+          <span>Settings</span>
+        </div>
+        <div class="toc-links"></div>
+      </nav>
 
       <main>
         <!-- General Settings -->
-        <section class="settings-section">
+        <section class="settings-section" id="general">
           <h2>General</h2>
 
           <div class="setting-row">
@@ -47,7 +55,7 @@
         </section>
 
         <!-- Display Settings -->
-        <section class="settings-section">
+        <section class="settings-section" id="display">
           <h2>Display</h2>
 
           <div class="setting-row">
@@ -105,7 +113,7 @@
         </section>
 
         <!-- Frame & Details Settings -->
-        <section class="settings-section">
+        <section class="settings-section" id="frame-details">
           <h2>Frame & Details</h2>
 
           <div class="setting-row">
@@ -231,7 +239,7 @@
         </section>
 
         <!-- Behavior Settings -->
-        <section class="settings-section">
+        <section class="settings-section" id="behavior">
           <h2>Behavior</h2>
 
           <div class="setting-row">
@@ -257,7 +265,7 @@
         </section>
 
         <!-- Keyboard Shortcuts -->
-        <section class="settings-section">
+        <section class="settings-section" id="shortcuts">
           <h2>Keyboard Shortcuts</h2>
 
           <!-- Replaced by the action key rows, see initActionKeys() -->
@@ -265,7 +273,7 @@
         </section>
 
         <!-- Excluded Sites -->
-        <section class="settings-section">
+        <section class="settings-section" id="excluded-sites">
           <h2>Excluded Sites</h2>
 
           <div class="setting-row">
@@ -286,7 +294,7 @@
         </section>
 
         <!-- Advanced Settings -->
-        <section class="settings-section">
+        <section class="settings-section" id="advanced">
           <h2>Advanced</h2>
 
           <div class="setting-row">
@@ -318,7 +326,7 @@
         </p>
         <span id="statusMsg"></span>
         <button id="resetBtn">Reset to Defaults</button>
-        <button id="saveBtn" class="primary">Save Options</button>
+        <button id="saveBtn" class="primary">Save Settings</button>
       </footer>
     </div>
 
