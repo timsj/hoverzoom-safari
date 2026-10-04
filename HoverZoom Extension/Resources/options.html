@@ -54,31 +54,9 @@
           </div>
         </section>
 
-        <!-- Display Settings -->
-        <section class="settings-section" id="display">
-          <h2>Display</h2>
-
-          <div class="setting-row">
-            <label for="displayDelay">Hover delay (ms):</label>
-            <input
-              type="number"
-              id="displayDelay"
-              min="0"
-              max="2000"
-              step="50"
-            />
-          </div>
-
-          <div class="setting-row">
-            <label for="fadeDuration">Fade duration (ms):</label>
-            <input
-              type="number"
-              id="fadeDuration"
-              min="0"
-              max="1000"
-              step="50"
-            />
-          </div>
+        <!-- Appearance -->
+        <section class="settings-section" id="appearance">
+          <h2>Appearance</h2>
 
           <div class="setting-row">
             <label for="zoomFactor">Zoom factor:</label>
@@ -110,11 +88,6 @@
               <span>Show shadow around zoomed images</span>
             </label>
           </div>
-        </section>
-
-        <!-- Frame & Details Settings -->
-        <section class="settings-section" id="frame-details">
-          <h2>Frame & Details</h2>
 
           <div class="setting-row">
             <label for="frameBackgroundColor">Frame background color:</label>
@@ -131,6 +104,11 @@
               step="1"
             />
           </div>
+        </section>
+
+        <!-- Labels -->
+        <section class="settings-section" id="labels">
+          <h2>Labels</h2>
 
           <div class="setting-row">
             <label for="captionLocation">Caption location:</label>
@@ -238,10 +216,38 @@
           </div>
         </section>
 
-        <!-- Behavior Settings -->
+        <!-- Behavior -->
         <section class="settings-section" id="behavior">
           <h2>Behavior</h2>
 
+          <div class="setting-row">
+            <label for="displayDelay">Hover delay (ms):</label>
+            <input
+              type="number"
+              id="displayDelay"
+              min="0"
+              max="2000"
+              step="50"
+            />
+          </div>
+
+          <div class="setting-row">
+            <label for="fadeDuration">Fade duration (ms):</label>
+            <input
+              type="number"
+              id="fadeDuration"
+              min="0"
+              max="1000"
+              step="50"
+            />
+          </div>
+
+          <div class="setting-row">
+            <label>
+              <input type="checkbox" id="mouseUnderlap" />
+              <span>Allow mouse under zoomed image</span>
+            </label>
+          </div>
           <div class="setting-row">
             <label>
               <input type="checkbox" id="enableGalleries" />
@@ -253,13 +259,6 @@
             <label>
               <input type="checkbox" id="galleriesMouseWheel" />
               <span>Use mouse wheel for gallery navigation</span>
-            </label>
-          </div>
-
-          <div class="setting-row">
-            <label>
-              <input type="checkbox" id="mouseUnderlap" />
-              <span>Allow mouse under zoomed image</span>
             </label>
           </div>
         </section>
