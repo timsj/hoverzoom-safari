@@ -230,6 +230,24 @@ main {
   cursor: pointer;
 }
 
+/* Indent aligns with the parent checkbox's text: 18px box + 10px label gap */
+.setting-row.sub-setting {
+  padding-left: 28px;
+}
+
+.setting-row:has(+ .sub-setting) {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.setting-row:has(input:disabled) {
+  opacity: 0.4;
+}
+
+.setting-row:has(input:disabled) * {
+  cursor: default;
+}
+
 .setting-row textarea {
   width: 100%;
   padding: 12px;

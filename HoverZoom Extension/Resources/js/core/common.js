@@ -48,6 +48,7 @@ const factorySettings = {
   hScrollBarOverlap: false,
   centerImages: false,
   autoLockImages: false,
+  frameBackgroundAuto: true,
   frameBackgroundColor: "#ffffff",
   frameThickness: 4,
   belowPositionOffset: 0,

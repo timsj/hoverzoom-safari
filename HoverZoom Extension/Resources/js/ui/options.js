@@ -147,6 +147,12 @@ function initToc() {
   update();
 }
 
+// The picker only applies when the frame isn't following the system appearance
+function syncFrameColorPicker() {
+  document.getElementById("frameBackgroundColor").disabled =
+    document.getElementById("frameBackgroundAuto").checked;
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   // Set version from manifest
   const manifest = browser.runtime.getManifest();
@@ -162,6 +168,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Bind event listeners
   document.getElementById("saveBtn").addEventListener("click", saveOptions);
   document.getElementById("resetBtn").addEventListener("click", resetOptions);
+  document
+    .getElementById("frameBackgroundAuto")
+    .addEventListener("change", syncFrameColorPicker);
 
   // Update opacity value displays
   document
@@ -204,8 +213,11 @@ async function loadOptionsUI() {
       options.centerImages === true;
     document.getElementById("viewerShadowEnabled").checked =
       options.viewerShadowEnabled !== false;
+    document.getElementById("frameBackgroundAuto").checked =
+      options.frameBackgroundAuto !== false;
     document.getElementById("frameBackgroundColor").value =
       options.frameBackgroundColor || "#ffffff";
+    syncFrameColorPicker();
     document.getElementById("frameThickness").value =
       options.frameThickness ?? factorySettings.frameThickness;
 
@@ -322,6 +334,8 @@ async function saveOptions() {
         parseFloat(document.getElementById("picturesOpacity").value) || 1,
       centerImages: document.getElementById("centerImages").checked,
       viewerShadowEnabled: document.getElementById("viewerShadowEnabled")
+        .checked,
+      frameBackgroundAuto: document.getElementById("frameBackgroundAuto")
         .checked,
       frameBackgroundColor: document.getElementById("frameBackgroundColor")
         .value,

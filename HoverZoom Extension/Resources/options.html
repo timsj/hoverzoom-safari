@@ -90,11 +90,6 @@
           </div>
 
           <div class="setting-row">
-            <label for="frameBackgroundColor">Frame background color:</label>
-            <input type="color" id="frameBackgroundColor" value="#ffffff" />
-          </div>
-
-          <div class="setting-row">
             <label for="frameThickness">Frame thickness (px):</label>
             <input
               type="number"
@@ -103,6 +98,18 @@
               max="20"
               step="1"
             />
+          </div>
+
+          <div class="setting-row">
+            <label>
+              <input type="checkbox" id="frameBackgroundAuto" />
+              <span>Match frame color to system appearance</span>
+            </label>
+          </div>
+
+          <div class="setting-row sub-setting">
+            <label for="frameBackgroundColor">Frame background color:</label>
+            <input type="color" id="frameBackgroundColor" value="#ffffff" />
           </div>
         </section>
 

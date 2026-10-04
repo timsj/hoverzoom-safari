@@ -655,7 +655,7 @@ var hoverZoom = {
             srcDetails.audio,
           );
           if (ext == "gif" || ext == "svg" || ext == "png")
-            imgFullSize.css("background-color", options.frameBackgroundColor);
+            imgFullSize.css("background-color", frameColor());
         }
       }
 
@@ -996,6 +996,13 @@ var hoverZoom = {
     }
 
     // set frame background color and border to match chosen option
+    const darkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function frameColor() {
+      if (!options.frameBackgroundAuto) return options.frameBackgroundColor;
+      return darkScheme.matches ? "#444444" : "#ffffff";
+    }
+
     function frameBackgroundColor(color) {
       imgFullSizeCss.borderColor =
         hzCaptionCss.backgroundColor =
@@ -2534,7 +2541,7 @@ var hoverZoom = {
         }
         // set background color = frame color
         if (!options.ambilightEnabled && options.frameThickness != "0")
-          imgFullSize.css("background-color", options.frameBackgroundColor);
+          imgFullSize.css("background-color", frameColor());
 
         if (viewerLocked) {
           // Allow clicking on locked image.
@@ -4934,7 +4941,7 @@ var hoverZoom = {
         return;
       }
 
-      frameBackgroundColor(options.frameBackgroundColor);
+      frameBackgroundColor(frameColor());
       frameThickness(options.frameThickness);
       fontSize(options.fontSize);
       maxWidth(options.maxWidth);
@@ -4956,6 +4963,10 @@ var hoverZoom = {
     }
 
     browser.runtime.onMessage.addListener(onMessage);
+    // Re-tint an open page when the system switches between light and dark
+    darkScheme.addEventListener("change", function () {
+      if (options.frameBackgroundAuto) frameBackgroundColor(frameColor());
+    });
     loadOptions();
 
     // In case we are being used on a website that removes us from the DOM, update the internal data structure to reflect this
