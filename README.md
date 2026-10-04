@@ -7,7 +7,7 @@ A port of the popular [Hover Zoom+](https://github.com/extesy/hoverzoom) extensi
 - macOS 13.0 or later
 - Safari 16 or later
 - Xcode 16 or later
-- A valid Apple ID account
+- An Apple ID (a free account is enough for signing)
 
 ## Installation
 
@@ -28,7 +28,7 @@ A port of the popular [Hover Zoom+](https://github.com/extesy/hoverzoom) extensi
 
 4. Select **Product → Run** (⌘R). This will build the project and launch the host app.
 
-5. Go to **Safari → Settings → Extensions** and enable **HoverZoom+**
+5. Go to **Safari → Settings → Extensions** and enable **HoverZoom**.
 
 ### Command Line Build
 
@@ -40,6 +40,12 @@ xcodebuild -scheme HoverZoom -configuration Release -derivedDataPath ./build && 
 
 This will create the binaries in the `./build` folder and open the host app automatically for registration after a successful build.
 
+Safari loads the extension from the built app, so deleting `./build` removes it from Safari. To keep the build folder disposable, copy `HoverZoom.app` to `/Applications` and open it once from there.
+
+## Usage
+
+Hover over a thumbnail or link to see it full size. Click the HoverZoom toolbar button and choose **Settings** to change how it looks and behaves, rebind keyboard shortcuts (for example, **L** locks the viewer), exclude sites, and export or import your settings.
+
 ## Troubleshooting
 
 ### Extension doesn't appear in Safari Settings
@@ -48,10 +54,11 @@ Try the following actions:
 
 - Make sure you've built and run the app in Xcode at least once
 - Ensure you selected a valid team in Signing & Capabilities for **both** the HoverZoom and HoverZoom Extension targets in the Xcode project editor
+- If you deleted `./build` or moved the app, rebuild it or open the app again
 
 ### Images not zooming on a specific site
 
-Some sites may not be fully supported or may have changed their structure since this extension was updated. This extension works best on sites with dedicated plugins, and at this time, only a [handful of these plugins](https://github.com/timsj/hoverzoom-safari/tree/main/HoverZoom%20Extension/Resources/js/plugins) were ported from the original extension.
+Check that the site isn't listed under **Excluded Sites** in the settings. Otherwise, the site may not be fully supported or may have changed its structure since this extension was updated. This extension works best on sites with dedicated plugins, and at this time, only a [handful of these plugins](https://github.com/timsj/hoverzoom-safari/tree/main/HoverZoom%20Extension/Resources/js/plugins) were ported from the original extension.
 
 ### Full-res images not appearing on some sites
 
@@ -67,4 +74,4 @@ This is a Safari port of [Hover Zoom+](https://github.com/extesy/hoverzoom) by e
 
 ## License
 
-As with the original project, this project is licensed under the MIT License.
+As with the original project, this project is licensed under the [MIT License](LICENSE).
