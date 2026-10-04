@@ -2,6 +2,8 @@
 
 A port of the popular [Hover Zoom+](https://github.com/extesy/hoverzoom) extension for Safari on macOS. There are currently no plans to distribute this extension via the Mac App Store, so you will have to build the extension from source on your own machine.
 
+<img height="720" alt="hovering on an image on Wikipedia" src="https://github.com/user-attachments/assets/c681f0a0-757d-45f6-a968-3851fb547455" />
+
 ## Requirements
 
 - macOS 13.0 or later
@@ -45,6 +47,8 @@ Safari loads the extension from the built app, so deleting `./build` removes it 
 ## Usage
 
 Hover over a thumbnail or link to see it full size. Click the HoverZoom toolbar button and choose **Settings** to change how it looks and behaves, rebind keyboard shortcuts (for example, **L** locks the viewer), exclude sites, and export or import your settings.
+
+<img height="500" alt="HoverZoom settings page" src="https://github.com/user-attachments/assets/67d749d2-fe41-4f61-b6ab-81ee01e78e33" />
 
 ## Troubleshooting
 
