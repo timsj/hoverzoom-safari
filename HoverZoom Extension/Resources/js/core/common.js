@@ -23,7 +23,7 @@ const factorySettings = {
   disableMouseWheelForVideo: false,
   scrollWheelCooldown: 0,
   alwaysPreload: false,
-  displayDelay: 100,
+  displayDelay: 200,
   displayDelayVideo: 500,
   fadeDuration: 200,
   excludedSites: [],

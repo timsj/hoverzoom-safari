@@ -194,9 +194,7 @@ async function loadOptionsUI() {
       options.zoomVideos !== false;
     document.getElementById("muteVideos").checked = options.muteVideos === true;
 
-    // Display
-    document.getElementById("displayDelay").value = options.displayDelay || 100;
-    document.getElementById("fadeDuration").value = options.fadeDuration || 200;
+    // Appearance
     document.getElementById("zoomFactor").value = options.zoomFactor || 1;
     document.getElementById("picturesOpacity").value =
       options.picturesOpacity || 1;
@@ -206,12 +204,12 @@ async function loadOptionsUI() {
       options.centerImages === true;
     document.getElementById("viewerShadowEnabled").checked =
       options.viewerShadowEnabled !== false;
-
-    // Frame & Details
     document.getElementById("frameBackgroundColor").value =
       options.frameBackgroundColor || "#ffffff";
     document.getElementById("frameThickness").value =
-      options.frameThickness ?? 4;
+      options.frameThickness ?? factorySettings.frameThickness;
+
+    // Labels
     document.getElementById("captionLocation").value =
       options.captionLocation || "none";
     document.getElementById("captionOpacity").value =
@@ -247,17 +245,23 @@ async function loadOptionsUI() {
       options.fontOutline === true;
 
     // Behavior
+    document.getElementById("displayDelay").value =
+      options.displayDelay ?? factorySettings.displayDelay;
+    document.getElementById("fadeDuration").value =
+      options.fadeDuration ?? factorySettings.fadeDuration;
+    document.getElementById("mouseUnderlap").checked =
+      options.mouseUnderlap !== false;
+    document.getElementById("enableGalleries").checked =
+      options.enableGalleries !== false;
+    document.getElementById("galleriesMouseWheel").checked =
+      options.galleriesMouseWheel !== false;
+
+    // Keyboard Shortcuts
     actionKeys.forEach(function ({ key }) {
       const value = options[key];
       document.getElementById(key).value =
         value === undefined ? factorySettings[key] : value;
     });
-    document.getElementById("enableGalleries").checked =
-      options.enableGalleries !== false;
-    document.getElementById("galleriesMouseWheel").checked =
-      options.galleriesMouseWheel !== false;
-    document.getElementById("mouseUnderlap").checked =
-      options.mouseUnderlap !== false;
 
     // Excluded Sites
     document.getElementById("whiteListMode").checked =
@@ -286,6 +290,12 @@ function normalizeExcludedSite(entry) {
     .toLowerCase(); // hostname is always lowercase
 }
 
+// Falls back to the default only when the field isn't a number, so 0 is kept.
+function numberSetting(key) {
+  const value = parseInt(document.getElementById(key).value);
+  return Number.isNaN(value) ? factorySettings[key] : value;
+}
+
 async function saveOptions() {
   try {
     // Parse excluded sites
@@ -306,23 +316,18 @@ async function saveOptions() {
       zoomVideos: document.getElementById("zoomVideos").checked,
       muteVideos: document.getElementById("muteVideos").checked,
 
-      // Display
-      displayDelay:
-        parseInt(document.getElementById("displayDelay").value) || 100,
-      fadeDuration:
-        parseInt(document.getElementById("fadeDuration").value) || 200,
+      // Appearance
       zoomFactor: parseFloat(document.getElementById("zoomFactor").value) || 1,
       picturesOpacity:
         parseFloat(document.getElementById("picturesOpacity").value) || 1,
       centerImages: document.getElementById("centerImages").checked,
       viewerShadowEnabled: document.getElementById("viewerShadowEnabled")
         .checked,
-
-      // Frame & Details
       frameBackgroundColor: document.getElementById("frameBackgroundColor")
         .value,
-      frameThickness:
-        parseInt(document.getElementById("frameThickness").value) ?? 4,
+      frameThickness: numberSetting("frameThickness"),
+
+      // Labels
       captionLocation: document.getElementById("captionLocation").value,
       captionOpacity:
         parseFloat(document.getElementById("captionOpacity").value) || 1,
@@ -346,11 +351,13 @@ async function saveOptions() {
       fontSize: parseInt(document.getElementById("fontSize").value) || 11,
       fontOutline: document.getElementById("fontOutline").checked,
 
-      // Behavior (action keys are added below)
+      // Behavior
+      displayDelay: numberSetting("displayDelay"),
+      fadeDuration: numberSetting("fadeDuration"),
+      mouseUnderlap: document.getElementById("mouseUnderlap").checked,
       enableGalleries: document.getElementById("enableGalleries").checked,
       galleriesMouseWheel: document.getElementById("galleriesMouseWheel")
         .checked,
-      mouseUnderlap: document.getElementById("mouseUnderlap").checked,
 
       // Excluded Sites
       whiteListMode: document.getElementById("whiteListMode").checked,
@@ -362,8 +369,7 @@ async function saveOptions() {
       debug: document.getElementById("debug").checked,
     };
 
-    // Action keys, plus the mouse-button flags the core derives from them. When the same button
-    // is bound twice, the second binding becomes the click-and-hold variant.
+    // Keyboard Shortcuts: a button bound twice makes the second binding its click-and-hold variant
     let rightButtonActive = false;
     let middleButtonActive = false;
     options.rightShortClick = false;
