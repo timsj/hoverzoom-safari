@@ -169,6 +169,17 @@ document.addEventListener("DOMContentLoaded", async function () {
   document.getElementById("saveBtn").addEventListener("click", saveOptions);
   document.getElementById("resetBtn").addEventListener("click", resetOptions);
   document
+    .getElementById("exportBtn")
+    .addEventListener("click", exportSettings);
+  document
+    .getElementById("importBtn")
+    .addEventListener("click", () =>
+      document.getElementById("importFile").click(),
+    );
+  document
+    .getElementById("importFile")
+    .addEventListener("change", importSettings);
+  document
     .getElementById("frameBackgroundAuto")
     .addEventListener("change", syncFrameColorPicker);
 
@@ -422,6 +433,108 @@ async function saveOptions() {
   } catch (error) {
     console.error("Error saving options:", error);
     showStatus("Error saving settings");
+  }
+}
+
+const SETTINGS_FORMAT = "hoverzoom-safari-settings";
+const SETTINGS_VERSION = 1;
+
+async function exportSettings() {
+  try {
+    const file = {
+      format: SETTINGS_FORMAT,
+      version: SETTINGS_VERSION,
+      extensionVersion: browser.runtime.getManifest().version,
+      exported: new Date().toISOString(),
+      settings: await optionsStorageGet(factorySettings),
+    };
+    const url = URL.createObjectURL(
+      new Blob([JSON.stringify(file, null, 2)], { type: "application/json" }),
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `hoverzoom-settings-${new Date().toLocaleDateString("en-CA")}.json`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (error) {
+    console.error("Error exporting options:", error);
+    showStatus("Error exporting settings");
+  }
+}
+
+// Keep only settings this version still has, with the same type as their default
+function sanitizeImportedSettings(imported) {
+  const clean = {};
+  let dropped = 0;
+  for (const [key, value] of Object.entries(imported)) {
+    const fallback = factorySettings[key];
+    if (!Object.hasOwn(factorySettings, key)) {
+      dropped++;
+    } else if (Array.isArray(fallback)) {
+      if (Array.isArray(value))
+        clean[key] = value.filter((v) => typeof v === "string");
+      else dropped++;
+    } else if (typeof value === typeof fallback) {
+      clean[key] = value;
+    } else {
+      dropped++;
+    }
+  }
+  if (clean.excludedSites) {
+    clean.excludedSites = [
+      ...new Set(
+        clean.excludedSites.map(normalizeExcludedSite).filter((s) => s),
+      ),
+    ];
+  }
+  return { clean, dropped };
+}
+
+async function importSettings(event) {
+  const file = event.target.files[0];
+  event.target.value = ""; // allows importing the same file again
+  if (!file) return;
+
+  let parsed;
+  try {
+    parsed = JSON.parse(await file.text());
+  } catch {
+    showStatus("Not a valid settings file");
+    return;
+  }
+  const settings = parsed && parsed.settings;
+  if (
+    parsed?.format !== SETTINGS_FORMAT ||
+    typeof parsed.version !== "number" ||
+    !settings ||
+    typeof settings !== "object" ||
+    Array.isArray(settings)
+  ) {
+    showStatus("Not a HoverZoom Safari settings file");
+    return;
+  }
+  if (parsed.version > SETTINGS_VERSION) {
+    showStatus("This file needs a newer version of HoverZoom");
+    return;
+  }
+
+  const { clean, dropped } = sanitizeImportedSettings(settings);
+  if (!confirm("Replace all current settings with the imported file?")) return;
+
+  try {
+    const options = { ...factorySettings, ...clean };
+    await browser.storage.sync.clear();
+    await browser.storage.sync.set(options);
+    await loadOptionsUI();
+    sendOptions(options);
+    showStatus(
+      dropped
+        ? `Settings imported! (${dropped} obsolete ${dropped === 1 ? "entry" : "entries"} ignored)`
+        : "Settings imported!",
+    );
+  } catch (error) {
+    console.error("Error importing options:", error);
+    showStatus("Error importing settings");
   }
 }
 

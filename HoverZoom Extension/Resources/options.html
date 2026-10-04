@@ -304,6 +304,13 @@
           <h2>Advanced</h2>
 
           <div class="setting-row">
+            <label>
+              <input type="checkbox" id="debug" />
+              <span>Enable debug logging</span>
+            </label>
+          </div>
+
+          <div class="setting-row">
             <label for="maxWidth">Max width (0 = unlimited):</label>
             <input type="number" id="maxWidth" min="0" max="4000" step="100" />
           </div>
@@ -314,10 +321,15 @@
           </div>
 
           <div class="setting-row">
-            <label>
-              <input type="checkbox" id="debug" />
-              <span>Enable debug logging</span>
-            </label>
+            <label>Settings file:</label>
+            <button id="exportBtn">Export Settings</button>
+            <button id="importBtn">Import Settings</button>
+            <input
+              type="file"
+              id="importFile"
+              accept=".json,application/json"
+              hidden
+            />
           </div>
         </section>
       </main>
