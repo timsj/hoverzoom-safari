@@ -4,7 +4,12 @@ hoverZoomPlugins.push({
   version: "0.3",
   prepareImgLinks: function (callback) {
     // https://preview.redd.it/example.png?width=640&amp;...
+    // preview.redd.it/<title-slug>-v0-<id>.<ext>?… -> i.redd.it/<id>.<ext>, which rejects the slug
     function transformPreviewUrl(url) {
+      const match = url.match(
+        /preview\.redd\.it\/(?:[^?]*-)?([a-z0-9]+\.[a-z0-9]+)(?:\?|$)/i,
+      );
+      if (match) return "https://i.redd.it/" + match[1];
       url = url.replace("preview", "i");
       url = url.slice("0", url.indexOf("?"));
       return url;
@@ -201,8 +206,16 @@ hoverZoomPlugins.push({
       });
     });
 
-    function processGalleryResponse(post, data) {
+    function prepareGallery(post, src) {
       if (!post || post.length === 0) return;
+      var img = post.find("a.title");
+      if (img.length === 0) img = post.find("a.thumbnail");
+      if (img.length === 0) img = post;
+      hoverZoom.prepareLink(img, src);
+      post.data().hoverZoomMouseOver = false;
+    }
+
+    function processGalleryResponse(post, data) {
       if (data && data.data) {
         var gallery_data = data.data.children[0].data.gallery_data;
         var media_metadata = data.data.children[0].data.media_metadata;
@@ -216,13 +229,33 @@ hoverZoomPlugins.push({
                 "." +
                 media_metadata[item.media_id].m.substring(6),
             ]);
-          var img = post.find("a.title");
-          if (img.length === 0) img = post.find("a.thumbnail");
-          if (img.length === 0) img = post;
-          hoverZoom.prepareLink(img, src);
-          post.data().hoverZoomMouseOver = false;
+          prepareGallery(post, src);
         }
       }
+    }
+
+    // Reddit now answers /by_id/*.json with a 403, but the carousel already holds every slide
+    function gallerySrcFromCarousel(carousel) {
+      const src = [];
+      carousel.find('li[slot^="page-"]').each(function () {
+        let url = null;
+        $(this)
+          .find("img")
+          .each(function () {
+            const value =
+              this.getAttribute("src") ||
+              this.getAttribute("data-lazy-src") ||
+              "";
+            if (value.startsWith("https://i.redd.it/")) {
+              url = value.split("?")[0];
+              return false;
+            }
+            if (!url && value.includes("preview.redd.it/"))
+              url = transformPreviewUrl(value);
+          });
+        if (url) src.push([url]);
+      });
+      return src;
     }
 
     $('div[data-url*="//www.reddit.com/gallery/"]').one(
@@ -273,6 +306,10 @@ hoverZoomPlugins.push({
         post.data().hoverZoomMouseOver = true;
         let galleryid = post.attr("id");
         let thumbnail = post.find('div[slot*="thumbnail"] > div'); //finds thumbnail
+        const src = gallerySrcFromCarousel(
+          $(`gallery-carousel[post-id="${galleryid}"]`),
+        );
+        if (src.length) return prepareGallery(thumbnail, src);
         $.get("/by_id/" + galleryid + ".json?raw_json=1", (data) =>
           processGalleryResponse(thumbnail, data),
         );
@@ -284,6 +321,8 @@ hoverZoomPlugins.push({
       let post = $(this);
       if (post.data().hoverZoomMouseOver) return;
       post.data().hoverZoomMouseOver = true;
+      const src = gallerySrcFromCarousel(post);
+      if (src.length) return prepareGallery(post, src);
       let galleryid = post.attr("post-id");
       $.get("/by_id/" + galleryid + ".json?raw_json=1", (data) =>
         processGalleryResponse(post, data),
