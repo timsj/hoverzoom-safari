@@ -80,6 +80,7 @@ var hoverZoom = {
     display: "flex",
     "align-items": "center",
     "justify-content": "center",
+    "pointer-events": "none",
   },
   hzViewerLoadingCss: {
     // green
@@ -123,6 +124,7 @@ var hoverZoom = {
       arrowDownKeyDown = false,
       viewerLocked = false,
       zoomFactor = 1,
+      zoomFactorSrc = null, // source whose natural size zoomFactor was set for
       zoomSpeedFactor = 1,
       pageActionShown = false,
       skipFadeIn = false,
@@ -130,7 +132,8 @@ var hoverZoom = {
       body100pct = true,
       linkRect = null,
       noFocusMsgAlreadyDisplayed = false,
-      lastScrollTime = 0;
+      lastScrollTime = 0,
+      currentSrcToken = 0;
     /*panning = true,
             panningThumb = null;*/
 
@@ -142,6 +145,7 @@ var hoverZoom = {
       host: "",
       naturalHeight: 0,
       naturalWidth: 0,
+      naturalSrc: "",
       displayedHeight: 0,
       displayedWidth: 0,
       video: false,
@@ -544,19 +548,36 @@ var hoverZoom = {
         imgFullSize.width("auto").height("auto");
         hz.hzViewer.width("auto").height("auto");
 
-        // image natural dimensions (videos expose these as videoWidth/videoHeight)
-
-        srcDetails.naturalWidth =
-          imgFullSize[0].naturalWidth ||
-          imgFullSize[0].videoWidth ||
-          imgFullSize.width();
-        srcDetails.naturalHeight =
-          imgFullSize[0].naturalHeight ||
-          imgFullSize[0].videoHeight ||
-          imgFullSize.height();
+        // Sampled once per source: adaptive video switches rendition mid-playback, which must not resize the viewer
+        if (srcDetails.naturalSrc !== srcDetails.url) {
+          srcDetails.naturalSrc = srcDetails.url;
+          srcDetails.naturalWidth = 0;
+          srcDetails.naturalHeight = 0;
+        }
+        if (!srcDetails.naturalWidth || !srcDetails.naturalHeight) {
+          const media = imgFullSize[0];
+          const width = media.naturalWidth || media.videoWidth;
+          const height = media.naturalHeight || media.videoHeight;
+          if (width && height) {
+            srcDetails.naturalWidth = width;
+            srcDetails.naturalHeight = height;
+          }
+        }
 
         if (!srcDetails.naturalWidth || !srcDetails.naturalHeight) {
           return;
+        }
+
+        // a new item displayed in a locked viewer starts fitted on screen
+        if (viewerLocked && zoomFactorSrc !== srcDetails.naturalSrc) {
+          zoomFactorSrc = srcDetails.naturalSrc;
+          zoomFactor = Math.min(
+            1,
+            (wndWidth - offset - padding - 2 * scrollBarWidth) /
+              srcDetails.naturalWidth,
+            (wndHeight - padding - statusBarHeight - scrollBarHeight) /
+              srcDetails.naturalHeight,
+          );
         }
 
         // width adjustment
@@ -723,16 +744,8 @@ var hoverZoom = {
           : lastClientPos.y !== null
             ? lastClientPos.y
             : window.innerHeight / 2;
-      var width =
-        imgFullSize[0].width ||
-        (imgFullSize[0].videoWidth
-          ? imgFullSize[0].videoWidth * zoomFactor
-          : 0);
-      var height =
-        imgFullSize[0].height ||
-        (imgFullSize[0].videoHeight
-          ? imgFullSize[0].videoHeight * zoomFactor
-          : 0);
+      var width = imgFullSize.width() || imgFullSize[0].width;
+      var height = imgFullSize.height() || imgFullSize[0].height;
       var widthOffset = (width - window.innerWidth) / 2;
       var heightOffset = (height - window.innerHeight) / 2;
       var ratioX = 1 - (2 * clientX) / window.innerWidth;
@@ -1170,6 +1183,7 @@ var hoverZoom = {
 
     function closeHoverZoomViewer(now) {
       cLog("closeHoverZoomImg(" + now + ")");
+      const closeSrcToken = currentSrcToken;
       if (hz.hzLoader) {
         hz.hzLoader.remove();
         hz.hzLoader = null;
@@ -1193,6 +1207,8 @@ var hoverZoom = {
         now = true;
       }
       function cleanupViewerState() {
+        // a new source took over the viewer while it was fading out
+        if (currentSrcToken !== closeSrcToken) return;
         stopMedias();
         hzCaptionMiscellaneous = null;
         hzDetails = null;
@@ -1363,6 +1379,9 @@ var hoverZoom = {
                   : isVideoLink(srcDetails.url)
                     ? options.displayDelayVideo
                     : options.displayDelay;
+
+              // a pending fade-out close must not wipe this new source
+              currentSrcToken++;
 
               if (srcDetails.audioUrl || srcDetails.url) {
                 loadFullSizeImageTimeout = setTimeout(loadFullSizeImage, delay);
@@ -1780,6 +1799,8 @@ var hoverZoom = {
 
       // If no image is currently displayed...
       if (!imgFullSize) {
+        // a pending fade-out close must not wipe this new source
+        currentSrcToken++;
         hz.displayImgLoader("loading");
         hz.createHzViewer(!hideKeyDown);
         zoomFactor = parseInt(options.zoomFactor);
@@ -1811,6 +1832,7 @@ var hoverZoom = {
           // MKV
           if (video.src.indexOf(".mkv") !== -1) video.type = "video/mp4";
           imgFullSize = $(video).appendTo(hz.hzViewer);
+          video.style.pointerEvents = viewerLocked ? "auto" : "none";
 
           video.addEventListener("error", srcFullSizeOnError);
           video.addEventListener("loadedmetadata", function () {
@@ -1942,6 +1964,7 @@ var hoverZoom = {
 
           imgFullSize = $('<img style="border: none" />')
             .appendTo(hz.hzViewer)
+            .css("pointer-events", "none")
             .attr("src", srcDetails.url)
             .addClass("hzPlaceholder");
 
@@ -1999,6 +2022,7 @@ var hoverZoom = {
           video.muted = options.muteVideos;
           video.volume = options.videoVolume;
           imgFullSize = $(video).appendTo(hz.hzViewer);
+          video.style.pointerEvents = viewerLocked ? "auto" : "none";
           hls = new Hls({
             debug: debug,
           });
@@ -2335,6 +2359,7 @@ var hoverZoom = {
             .appendTo(hz.hzViewer.hzContainer)
             .on("load", srcFullSizeOnLoad)
             .on("error", srcFullSizeOnError)
+            .css("pointer-events", "none")
             .attr("src", srcDetails.url);
           // Note for Chrome: if image is loaded from cache then 'load' event is never fired
         }
@@ -2504,7 +2529,10 @@ var hoverZoom = {
       } else {
         // audio controls alone
         if (audioControls)
-          audioControls.css(audioControlsCss).appendTo(hz.hzViewer.hzContainer);
+          audioControls
+            .css(audioControlsCss)
+            .css("pointer-events", "auto")
+            .appendTo(hz.hzViewer.hzContainer);
       }
 
       if (hz.currentLink) {
@@ -2546,6 +2574,7 @@ var hoverZoom = {
         if (viewerLocked) {
           // Allow clicking on locked image.
           hz.hzViewer.css("pointer-events", "auto");
+          if (imgFullSize) imgFullSize.css("pointer-events", "auto");
         }
 
         initLinkRect(imgThumb || hz.currentLink);
@@ -2599,9 +2628,11 @@ var hoverZoom = {
             } else {
               zoomFactor = zoomFactorFit;
             }
+            zoomFactorSrc = srcDetails.naturalSrc;
             viewerLocked = true;
             // Allow clicking on locked image.
             hz.hzViewer.css("pointer-events", "auto");
+            if (imgFullSize) imgFullSize.css("pointer-events", "auto");
 
             // Recheck image size to fix image zoom and position
             posViewer();
@@ -2618,9 +2649,11 @@ var hoverZoom = {
       $("#hzBelow").remove();
       hzAbove = $("<div/>", { id: "hzAbove" })
         .css(hzAboveCss)
+        .css("pointer-events", "none")
         .prependTo(hz.hzViewer);
       hzBelow = $("<div/>", { id: "hzBelow" })
         .css(hzBelowCss)
+        .css("pointer-events", "none")
         .appendTo(hz.hzViewer);
 
       if (options.detailsLocation != "none") displayDetails();
@@ -3378,7 +3411,8 @@ var hoverZoom = {
         passive: false,
       });
       if (options.zoomVideos) {
-        $(document).on("visibilitychange", closeHoverZoomViewer);
+        // don't pass the event as 'now': a tab switch must not force-close a locked viewer
+        $(document).on("visibilitychange", () => closeHoverZoomViewer());
       }
 
       bindJsaction();
@@ -3414,6 +3448,7 @@ var hoverZoom = {
 
       if (
         options.galleriesMouseWheel &&
+        !viewerLocked &&
         data &&
         data.hoverZoomGallerySrc &&
         data.hoverZoomGallerySrc.length > 1
@@ -3484,6 +3519,7 @@ var hoverZoom = {
         } else {
           zoomFactor = zoomFactorFit;
         }
+        zoomFactorSrc = srcDetails.naturalSrc;
         lockViewer();
       } else {
         if (zoomFactor !== zoomFactorFit) {
@@ -5106,6 +5142,8 @@ var hoverZoom = {
 
       // If the user clicks the image, this simulates a click underneath
       hoverZoom.hzViewer.click(function (event) {
+        // Locked video clicks control playback, don't forward them to the page.
+        if (event.target.tagName === "VIDEO") return;
         if (hoverZoom.currentLink && hoverZoom.currentLink.length) {
           var simEvent = document.createEvent("MouseEvents");
           simEvent.initMouseEvent(
