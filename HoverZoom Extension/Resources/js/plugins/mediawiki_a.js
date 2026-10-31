@@ -2,11 +2,12 @@ var hoverZoomPlugins = hoverZoomPlugins || [];
 hoverZoomPlugins.push({
   name: "MediaWiki_a",
   version: "1.2",
+  favicon: "mediawiki.svg",
   prepareImgLinks: function (callback) {
     var res = [];
 
-    // thumbnail: /images/thumb/2/26/Example.png/534px-Example.png?de6e2
-    // fullsize: https://example.wiki/images/2/26/Example.png
+    // thumbnail: /images/thumb/2/26/Senntisten_Kree%27arra_vs_Nodon.png/534px-Senntisten_Kree%27arra_vs_Nodon.png?de6e2
+    //  fullsize: https://runescape.wiki/images/2/26/Senntisten_Kree%27arra_vs_Nodon.png
     $('.mediawiki img[src*="thumb/"], image[href*="wiki"]').each(function () {
       let _this = $(this);
       let src = "";
@@ -23,30 +24,29 @@ hoverZoomPlugins.push({
 
       src = src.replace(/([^?]+).*/, "$1");
 
-      if (src.substr(src.length - 8) === ".svg.png") {
+      if (src.substring(src.length - 8) === ".svg.png") {
         ext = ".svg";
       } else {
-        ext = src.substr(src.lastIndexOf("."));
+        ext = src.substring(src.lastIndexOf("."));
       }
 
       if (src.indexOf(ext + "/") === -1) return;
 
+      // thumbnails are served by thumb.wikimedia.org, originals by upload.wikimedia.org
       srcs.push(
         src
           .substring(0, src.indexOf(ext) + ext.length)
-          // Wikimedia serves thumbnails from thumb.wikimedia.org but keeps originals on
-          // upload.wikimedia.org (phabricator T427465), so dropping the /thumb/ path segment
-          // is not enough — the host has to be swapped back as well.
-          .replace("://thumb.wikimedia.org/", "://upload.wikimedia.org/")
-          .replace("thumb/", ""),
+          .replace("thumb/", "")
+          .replace("//thumb.wikimedia.org/", "//upload.wikimedia.org/"),
       );
       _this.data().hoverZoomSrc = srcs;
       res.push(_this);
     });
 
-    // sample (image): https://commons.wikimedia.org/wiki/File:Example.jpg
-    // sample (audio): https://en.wiktionary.org/wiki/File:En-au-example.ogg
-    // sample (video): https://en.wikipedia.org/wiki/File:Example.ogv
+    // sample (image): https://commons.wikimedia.org/wiki/File:Mary_Stuart_Young6.jpg
+    // sample (audio): https://en.wiktionary.org/wiki/File:En-au-face-melter.ogg
+    // sample (video): https://en.wikipedia.org/wiki/File:Rocky_(1976)_-_Rocky_Steps.ogv
+    //                 https://de.wiktionary.org/wiki/Datei:Bublak_mofette.ogv
     $('a[href*="/wiki/"]')
       .filter(function () {
         return /\/wiki\/\w+:/.test($(this).prop("href"));
@@ -63,6 +63,7 @@ hoverZoomPlugins.push({
             this.href,
             function (doc, callback) {
               // check if the target link redirects to the same document
+              // #1725 : handle missing canonical link(s)
               const current = document.head.querySelector(
                 'link[rel="canonical"]',
               )?.href;
