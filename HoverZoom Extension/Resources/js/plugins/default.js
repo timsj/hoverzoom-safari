@@ -8,12 +8,12 @@ hoverZoomPlugins.push({
   prepareImgLinks: function (callback) {
     const res = [];
     const reVideos =
-      /\/[^:]+\.(?:3gpp|m4v|mkv|mp4|ogv|webm)(?:[\?#].*)?(?:\/)?$/i;
+      /\/[^:\/]*[^:]\.(?:3gpp|m4v|mkv|mp4|ogv|webm)(?:[\?#].*)?(?:\/)?$/i;
     const reImages =
-      /\/[^:]+\.(?:avif|bmp|gifv?|ico|jfif|jpe|jpe?g|png|svg|webp|xbm)(?:[\?#].*)?(?:\/)?$/i;
-    const rePlaylists = /\/[^:]+\.(?:m3u8)(?:[\?#].*)?(?:\/)?$/i;
+      /\/[^:\/]*[^:]\.(?:avif|bmp|gifv?|ico|jfif|jpe|jpe?g|png|svg|webp|xbm)(?:[\?#].*)?(?:\/)?$/i;
+    const rePlaylists = /\/[^:\/]*[^:]\.(?:m3u8)(?:[\?#].*)?(?:\/)?$/i;
     const reAudios =
-      /\/[^:]+\.(?:flac|m4a|mp3|oga|ogg|opus|wav)(?:[\?#].*)?(?:\/)?$/i;
+      /\/[^:\/]*[^:]\.(?:flac|m4a|mp3|oga|ogg|opus|wav)(?:[\?#].*)?(?:\/)?$/i;
 
     // Handle <a href> elements pointing to image files
     $("a[href]")
