@@ -131,7 +131,7 @@ hoverZoomPlugins.push({
             }
             case "gallery": {
               let galleryid = post.attr("id");
-              $.get("/by_id/" + galleryid + ".json?raw_json=1", (data) =>
+              $.get(galleryJsonUrl(galleryid), (data) =>
                 processGalleryResponse(img, data),
               );
               return;
@@ -215,7 +215,14 @@ hoverZoomPlugins.push({
       post.data().hoverZoomMouseOver = false;
     }
 
+    // /by_id/ is blocked by Reddit, so use /comments/ which accepts a bare post id (without t3_ prefix)
+    function galleryJsonUrl(id) {
+      return "/comments/" + id.replace(/^t3_/, "") + "/.json?raw_json=1";
+    }
+
     function processGalleryResponse(post, data) {
+      // /comments/ returns [postListing, commentsListing]
+      if (Array.isArray(data)) data = data[0];
       if (data && data.data) {
         var gallery_data = data.data.children[0].data.gallery_data;
         var media_metadata = data.data.children[0].data.media_metadata;
@@ -234,7 +241,7 @@ hoverZoomPlugins.push({
       }
     }
 
-    // Reddit now answers /by_id/*.json with a 403, but the carousel already holds every slide
+    // The carousel already holds every slide, so no request is needed
     function gallerySrcFromCarousel(carousel) {
       const src = [];
       carousel.find('li[slot^="page-"]').each(function () {
@@ -266,7 +273,7 @@ hoverZoomPlugins.push({
         post.data().hoverZoomMouseOver = true;
         let link = post.attr("data-url");
         var galleryid = link.substring(link.lastIndexOf("/") + 1);
-        $.get("/by_id/t3_" + galleryid + ".json?raw_json=1", (data) =>
+        $.get(galleryJsonUrl(galleryid), (data) =>
           processGalleryResponse(post, data),
         );
       },
@@ -278,7 +285,7 @@ hoverZoomPlugins.push({
       post.data().hoverZoomMouseOver = true;
       let link = post.attr("href");
       let galleryid = link.substring(link.lastIndexOf("/") + 1);
-      $.get("/by_id/t3_" + galleryid + ".json?raw_json=1", (data) =>
+      $.get(galleryJsonUrl(galleryid), (data) =>
         processGalleryResponse(post, data),
       );
     });
@@ -288,7 +295,7 @@ hoverZoomPlugins.push({
       if (post.data().hoverZoomMouseOver) return;
       post.data().hoverZoomMouseOver = true;
       let galleryid = post.attr("data-fullname");
-      $.get("/by_id/" + galleryid + ".json?raw_json=1", (data) =>
+      $.get(galleryJsonUrl(galleryid), (data) =>
         processGalleryResponse(post, data),
       );
     });
@@ -310,7 +317,7 @@ hoverZoomPlugins.push({
           $(`gallery-carousel[post-id="${galleryid}"]`),
         );
         if (src.length) return prepareGallery(thumbnail, src);
-        $.get("/by_id/" + galleryid + ".json?raw_json=1", (data) =>
+        $.get(galleryJsonUrl(galleryid), (data) =>
           processGalleryResponse(thumbnail, data),
         );
       },
@@ -324,7 +331,7 @@ hoverZoomPlugins.push({
       const src = gallerySrcFromCarousel(post);
       if (src.length) return prepareGallery(post, src);
       let galleryid = post.attr("post-id");
-      $.get("/by_id/" + galleryid + ".json?raw_json=1", (data) =>
+      $.get(galleryJsonUrl(galleryid), (data) =>
         processGalleryResponse(post, data),
       );
     });
